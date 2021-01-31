@@ -3,23 +3,32 @@ package filereader
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 )
 
-type fileReader interface {
-	Read(filepath string)
+type FileReader interface {
+	Read(filepath string) error
+}
+
+type fileReaderInstance struct {
+	FileReader
 }
 
 type fileReaderImpl struct {
 }
 
+func NewFileReaderInstance() *fileReaderInstance {
+	return &fileReaderInstance{
+		&fileReaderImpl{},
+	}
+}
+
 // pointer receiver can handle own variables
-func (s *fileReaderImpl) Read(filepath string) {
+func (s *fileReaderImpl) Read(filepath string) error {
 	// open file
 	fp, err := os.Open(filepath)
 	if err != nil {
-		log.Fatal("[ERROR] os.Open")
+		return err
 	}
 	defer fp.Close()
 	// scan file
@@ -30,10 +39,7 @@ func (s *fileReaderImpl) Read(filepath string) {
 	}
 
 	if err = scanner.Err(); err != nil {
-		log.Fatal("[ERROR] scanner.Scan()")
+		return err
 	}
-}
-
-func NewFileReaderImpl() *fileReaderImpl {
-	return &fileReaderImpl{}
+	return nil
 }

@@ -9,6 +9,7 @@ type printer interface {
 }
 
 type printerImpl struct {
+	printer
 }
 
 // pointer receiver can handle own variables
