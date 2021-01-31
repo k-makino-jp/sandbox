@@ -11,8 +11,7 @@ const (
 	exitStatusFailed  = 1
 )
 
-func execPrinter() {
-	p := printer.NewPrinterImpl()
+func execPrinter(p printer.Printer) {
 	p.Print()
 }
 
@@ -25,7 +24,8 @@ func execFileReader(f filereader.FileReader) uint8 {
 }
 
 func call() {
-	execPrinter()
+	p := printer.NewPrinterImpl()
+	execPrinter(p)
 	f := filereader.NewFileReaderInstance()
 	execFileReader(f)
 }

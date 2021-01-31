@@ -4,12 +4,11 @@ import (
 	"fmt"
 )
 
-type printer interface {
+type Printer interface {
 	Print()
 }
 
 type printerImpl struct {
-	printer
 }
 
 // pointer receiver can handle own variables
