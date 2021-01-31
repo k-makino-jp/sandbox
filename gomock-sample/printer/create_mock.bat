@@ -1,0 +1,1 @@
+mockgen -source printer.go -destination mock_printer/mock_printer.go

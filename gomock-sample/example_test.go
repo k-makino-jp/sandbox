@@ -7,6 +7,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"local.packages/filereader"
 	"local.packages/filereader/mock_filereader"
+	"local.packages/printer"
+	"local.packages/printer/mock_printer"
 )
 
 const (
@@ -72,6 +74,41 @@ func Test_execFileReader(t *testing.T) {
 				t.Errorf("execFileReader() = %v, want %v", got, tt.want)
 			}
 			tt.testTeardown()
+		})
+	}
+}
+
+func Test_execPrinter(t *testing.T) {
+	// create controller
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	// create mock
+	mock := mock_printer.NewMockPrinter(ctrl)
+	mock.EXPECT().Print().Return()
+
+	type args struct {
+		p printer.Printer
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: PrefixNormalCase + "execute",
+			args: args{
+				p: printer.NewPrinterImpl(),
+			},
+		},
+		{
+			name: PrefixNormalCase + "execute with mock",
+			args: args{
+				p: mock,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			execPrinter(tt.args.p)
 		})
 	}
 }
