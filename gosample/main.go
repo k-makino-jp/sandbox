@@ -1,11 +1,12 @@
 package main
 
 import (
-	"fmt"
-	"gosample/printer"
+	"gosample/hoge/printer"
 )
 
 func main() {
-	fmt.Println("test")
-	printer.Print()
+	// create instance
+	p := printer.NewPrintImpl()
+	// execute function
+	p.Print()
 }
