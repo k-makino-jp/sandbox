@@ -6,6 +6,8 @@ import (
 	"gosample/hoge/decryptor"
 	"gosample/hoge/encryptor"
 	"gosample/hoge/printer"
+	"gosample/hoge/scanner"
+	"log"
 )
 
 func main() {
@@ -30,4 +32,12 @@ func main() {
 	outputFilePath = "decrypted.json"
 	d := decryptor.NewDecryptorImpl("encypted.json", outputFilePath)
 	d.Decrypt()
+
+	// scanner
+	s := scanner.NewScannerImpl("scandata.txt")
+	line, err := s.Scan()
+	if err != nil {
+		log.Fatal("ERROR", line)
+	}
+	fmt.Println(s.Get())
 }
