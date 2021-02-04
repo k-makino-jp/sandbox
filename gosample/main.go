@@ -6,8 +6,9 @@ import (
 	"gosample/hoge/decryptor"
 	"gosample/hoge/encryptor"
 	"gosample/hoge/printer"
-	"gosample/hoge/scanner"
-	"log"
+
+	// "gosample/hoge/scanner"
+	time "gosample/hoge/timer"
 )
 
 func main() {
@@ -34,10 +35,15 @@ func main() {
 	d.Decrypt()
 
 	// scanner
-	s := scanner.NewScannerImpl("scandata.txt")
-	line, err := s.Scan()
-	if err != nil {
-		log.Fatal("ERROR", line)
-	}
-	fmt.Println(s.Get())
+	// s := scanner.NewScannerImpl("scandata.txt")
+	// line, err := s.Scan()
+	// if err != nil {
+	// 	log.Fatal("ERROR", line)
+	// }
+	// fmt.Println(s.Get())
+
+	// timer
+	t := time.NewTimerImpl()
+	fmt.Println(t.Now())
+	fmt.Println(t.NowRFC3389())
 }
