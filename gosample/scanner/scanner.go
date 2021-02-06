@@ -3,58 +3,94 @@ package scanner
 import (
 	"bufio"
 	"errors"
-	"log"
+	"fmt"
 	"os"
 	"regexp"
 )
 
+var (
+	regexpCompile       = regexp.Compile
+	osOpen              = os.Open
+	scannerMaxTokenSize = bufio.MaxScanTokenSize
+
+	errInvalidLine     = errors.New("Invalid line error occurred")
+	errDuplicatedLines = errors.New("Duplicated lines are detected")
+	errFileNotExist    = errors.New("File not exist")
+	errCannotOpenFile  = errors.New("Cannnot open file")
+	errScanFailed      = errors.New("Scan failed")
+)
+
 type Scanner interface {
-	Scan()
-	isMatchFormat()
+	Get() []string
+	Scan() error
+	lineValidation(string) bool
 }
 
 type ScannerImpl struct {
-	scanFilePath string
-	lines        []string
+	validLines []string
 }
 
-func (s *ScannerImpl) Scan() (string, error) {
-	// open file
-	fp, err := os.Open(s.scanFilePath)
+func (s *ScannerImpl) lineValidation(line string) error {
+	r, err := regexpCompile(`^[A-Z\d]{8}-[A-Z]{2}[A-Z\d]{2}C\d{2}$`)
 	if err != nil {
-		return "", err
+		return err
+	}
+	if !r.MatchString(line) {
+		return errInvalidLine
+	}
+	return nil
+}
+
+func (s *ScannerImpl) detectDuplicate(lines []string) error {
+	encounterd := map[string]int{}
+	for _, line := range lines {
+		encounterd[line]++
+	}
+	for k, v := range encounterd {
+		if v > 1 {
+			fmt.Println("Duplicated Line:", k)
+			return errDuplicatedLines
+		}
+	}
+	return nil
+}
+
+func (s *ScannerImpl) Get() []string {
+	return s.validLines
+}
+
+func (s *ScannerImpl) Scan(scanFilePath string) error {
+	// is file exist
+	if _, err := os.Stat(scanFilePath); err != nil {
+		fmt.Println(err)
+		return errFileNotExist
+	}
+	// open file
+	fp, err := osOpen(scanFilePath)
+	if err != nil {
+		fmt.Println(err)
+		return errCannotOpenFile
 	}
 	defer fp.Close()
 	// scan file
 	scanner := bufio.NewScanner(fp)
 	for scanner.Scan() {
 		line := scanner.Text()
-		if s.isMatchFormat(line) {
-			return line, errors.New("ERROR")
+		if err = s.lineValidation(line); err != nil {
+			return err
 		}
-		s.lines = append(s.lines, line)
+		s.validLines = append(s.validLines, line)
 	}
 	if err = scanner.Err(); err != nil {
-		return "", err
+		fmt.Println(err)
+		return errScanFailed
 	}
-
-	return "", nil
+	if err = s.detectDuplicate(s.validLines); err != nil {
+		return err
+	}
+	return nil
 }
 
-func (s *ScannerImpl) Get() []string {
-	return s.lines
-}
-
-func (s *ScannerImpl) isMatchFormat(line string) bool {
-	r, err := regexp.Compile(`[a-z]{4}[A-Z]{4}\d{3}`)
-	if err != nil {
-		log.Fatal(nil)
-	}
-	return r.MatchString(line)
-}
-
-func NewScannerImpl(scanFilePath string) *ScannerImpl {
-	return &ScannerImpl{
-		scanFilePath: scanFilePath,
-	}
+func NewScannerImpl() *ScannerImpl {
+	return &ScannerImpl{}
 }
