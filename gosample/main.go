@@ -5,7 +5,9 @@ import (
 	"gosample/hoge/configer"
 	"gosample/hoge/decryptor"
 	"gosample/hoge/encryptor"
+	"gosample/hoge/http"
 	"gosample/hoge/printer"
+	"log"
 
 	// "gosample/hoge/scanner"
 	time "gosample/hoge/timer"
@@ -46,4 +48,22 @@ func main() {
 	t := time.NewTimerImpl()
 	fmt.Println(t.Now())
 	fmt.Println(t.NowRFC3389())
+
+	// http
+	h := http.NewHttpClientImpl()
+	endpoint := "https://www.google.com/"
+	// apipath := ""
+	var header, query map[string]string
+	// _, err, statusCode := h.Request(endpoint, method, apipath, header, query, body)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// fmt.Println("=== StatusCode =", statusCode)
+	// fmt.Println(string(respBody))
+	_, err, statusCode := h.Get(endpoint, header, query)
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println("=== StatusCode =", statusCode)
+	// fmt.Println(string(respBody))
 }
