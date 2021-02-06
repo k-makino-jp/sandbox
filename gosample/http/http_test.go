@@ -32,7 +32,6 @@ func Test_httpClientImpl_Get(t *testing.T) {
 		name           string
 		h              *httpClientImpl
 		args           args
-		httpMockServer *httptest.Server
 		wantRespBody   []byte
 		wantStatusCode int
 		wantErr        bool
@@ -45,13 +44,6 @@ func Test_httpClientImpl_Get(t *testing.T) {
 				header:  testHeader,
 				query:   testQuery,
 			},
-			httpMockServer: httptest.NewServer(
-				http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						fmt.Fprintf(w, "Hello HTTP Test")
-					},
-				),
-			),
 			wantRespBody:   []byte("Hello HTTP Test"),
 			wantStatusCode: 200,
 			wantErr:        false,
@@ -76,10 +68,10 @@ func Test_httpClientImpl_Get(t *testing.T) {
 		// 	wantErr:        false,
 		// },
 	}
+	ts := httptest.NewServer(httpMockServer)
+	defer ts.Close()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(httpMockServer)
-			defer ts.Close()
 			var baseURL string
 			if tt.args.baseURL == "" {
 				baseURL = ts.URL
@@ -88,7 +80,6 @@ func Test_httpClientImpl_Get(t *testing.T) {
 			}
 			gotRespBody, err, gotStatusCode := tt.h.Get(baseURL, tt.args.header, tt.args.query)
 			if (err != nil) != tt.wantErr {
-				fmt.Println("ERROR")
 				t.Errorf("httpClientImpl.Get() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
