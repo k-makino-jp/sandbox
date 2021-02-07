@@ -14,7 +14,7 @@ import (
 	timer "gosample/hoge/timer"
 )
 
-func main() {
+func sample() {
 	// create instance
 	p := printer.NewPrintImpl()
 	// execute function
@@ -27,15 +27,10 @@ func main() {
 	config := c.Get()
 	fmt.Println(config)
 
-	// encryptor
-	outputFilePath := "encypted.json"
-	e := encryptor.NewEncryptorImpl(outputFilePath)
-	e.Encrypt()
-
-	// decryptor
-	outputFilePath = "decrypted.json"
-	d := decryptor.NewDecryptorImpl("encypted.json", outputFilePath)
-	d.Decrypt()
+	// timerr
+	t := timer.NewTimerImpl()
+	fmt.Println(t.Now())
+	fmt.Println(t.NowRFC3389())
 
 	// scanner
 	// s := scanner.NewScannerImpl("scandata.txt")
@@ -44,11 +39,6 @@ func main() {
 	// 	log.Fatal("ERROR", line)
 	// }
 	// fmt.Println(s.Get())
-
-	// timerr
-	t := timer.NewTimerImpl()
-	fmt.Println(t.Now())
-	fmt.Println(t.NowRFC3389())
 
 	// http
 	retryMax := 3
@@ -71,4 +61,20 @@ func main() {
 	// }
 	// fmt.Println("=== StatusCode =", statusCode)
 	// fmt.Println(string(respBody))
+}
+
+func main() {
+	// encryptor
+	input := "plaintext.json"
+	output := "encrypted.json"
+	e := encryptor.NewEncryptorImpl(input, output)
+	e.Encrypt()
+
+	// decryptor
+	input = "encrypted.json"
+	output = "decrypted.json"
+	d := decryptor.NewDecryptorImpl(input, output)
+	// The key should be 32 bytes (AES-256)
+	key := []byte("12345678901234567890123456789012")
+	d.Decrypt(key)
 }

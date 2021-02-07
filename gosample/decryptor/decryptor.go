@@ -3,12 +3,12 @@ package decryptor
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"fmt"
 	"io/ioutil"
-	"log"
 )
 
 type Decryptor interface {
-	Decrypt()
+	Decrypt(key []byte) error
 }
 
 type DecryptorImpl struct {
@@ -16,41 +16,45 @@ type DecryptorImpl struct {
 	decryptedFilePath string
 }
 
-func (e *DecryptorImpl) Decrypt() {
+var (
+	cipherNewGCM = cipher.NewGCM
+)
+
+func (e *DecryptorImpl) Decrypt(key []byte) error {
 	ciphertext, err := ioutil.ReadFile(e.encryptedFilePath)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	// The key should be 32 bytes (AES-256)
-	key := []byte("12345678901234567890123456789012")
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	gcm, err := cipher.NewGCM(block)
+	gcm, err := cipherNewGCM(block)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	nonce := ciphertext[:gcm.NonceSize()]
 	ciphertext = ciphertext[gcm.NonceSize():]
 	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	err = ioutil.WriteFile(e.decryptedFilePath, plaintext, 0755)
-	if err != nil {
-		log.Fatal(err)
-	}
+	fmt.Println(string(plaintext))
+	// err = ioutil.WriteFile(e.decryptedFilePath, plaintext, 0755)
+	// if err != nil {
+	// 	return err
+	// }
+	return nil
 
 }
 
-func NewDecryptorImpl(inputFilePath, outputFilePath string) *DecryptorImpl {
+func NewDecryptorImpl(input, output string) *DecryptorImpl {
 	return &DecryptorImpl{
-		encryptedFilePath: inputFilePath,
-		decryptedFilePath: outputFilePath,
+		encryptedFilePath: input,
+		decryptedFilePath: output,
 	}
 }

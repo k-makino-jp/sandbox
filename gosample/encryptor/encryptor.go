@@ -14,11 +14,13 @@ type Encryptor interface {
 }
 
 type EncryptorImpl struct {
+	inputFilePath  string
 	outputFilePath string
 }
 
+// cipher algorithm: AES-256 GCM Mode
 func (e *EncryptorImpl) Encrypt() {
-	plaintext, err := ioutil.ReadFile("plaintext.json")
+	plaintext, err := ioutil.ReadFile(e.inputFilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,6 +37,8 @@ func (e *EncryptorImpl) Encrypt() {
 		log.Panic(err)
 	}
 
+	// nonce is an arbitrary number that can be used just once in a cryptographic communication.
+	// gcm.NonceSize() equals 12
 	nonce := make([]byte, gcm.NonceSize())
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
 		log.Fatal(err)
@@ -48,8 +52,9 @@ func (e *EncryptorImpl) Encrypt() {
 	}
 }
 
-func NewEncryptorImpl(outputFilePath string) *EncryptorImpl {
+func NewEncryptorImpl(input, output string) *EncryptorImpl {
 	return &EncryptorImpl{
-		outputFilePath: outputFilePath,
+		inputFilePath:  input,
+		outputFilePath: output,
 	}
 }
