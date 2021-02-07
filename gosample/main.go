@@ -8,9 +8,10 @@ import (
 	"gosample/hoge/http"
 	"gosample/hoge/printer"
 	"log"
+	"time"
 
 	// "gosample/hoge/scanner"
-	time "gosample/hoge/timer"
+	timer "gosample/hoge/timer"
 )
 
 func main() {
@@ -44,13 +45,17 @@ func main() {
 	// }
 	// fmt.Println(s.Get())
 
-	// timer
-	t := time.NewTimerImpl()
+	// timerr
+	t := timer.NewTimerImpl()
 	fmt.Println(t.Now())
 	fmt.Println(t.NowRFC3389())
 
 	// http
-	h := http.NewHttpClientImpl()
+	retryMax := 3
+	retryWaitMin := 1 * time.Second
+	retryWaitMax := 5 * time.Second
+	httpRequestTimeout := 5 * time.Second
+	h := http.NewHttpClientImpl(retryMax, retryWaitMin, retryWaitMax, httpRequestTimeout)
 	endpoint := "https://www.google.com/"
 	apipath := ""
 	var header, query map[string]string

@@ -11,6 +11,31 @@ import (
 	"testing"
 )
 
+// URL Creator
+// urlCreator := func(endpoint, apipath string, query map[string]string) string {
+// 	// configure base URL
+// 	baseURL, err := url.Parse("http://" + endpoint)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// join api path
+// 	if apipath != "" {
+// 		baseURL.Path = path.Join(baseURL.Path, apipath)
+// 	}
+// 	// set query
+// 	q := baseURL.Query()
+// 	for key, value := range query {
+// 		q.Set(key, value)
+// 	}
+// 	baseURL.RawQuery = q.Encode()
+// 	return baseURL.String()
+// }
+// fmt.Println(urlCreator(customEndpoint, testApiPath, testQuery))
+
+// wantErr: fmt.Errorf(
+// 	`Get "%s": %s %s giving up after %d attempt(s)`,
+// 	urlCreator(customEndpoint, testApiPath, testQuery), testMethodGet, urlCreator(customEndpoint, testApiPath, testQuery), retryMax+1).Error(),
+
 // func Test_httpClientImpl_Get(t *testing.T) {
 // 	// configure variables
 // 	testQuery := map[string]string{
