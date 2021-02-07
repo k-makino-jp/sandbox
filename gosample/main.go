@@ -52,18 +52,18 @@ func main() {
 	// http
 	h := http.NewHttpClientImpl()
 	endpoint := "https://www.google.com/"
-	// apipath := ""
+	apipath := ""
 	var header, query map[string]string
-	// _, err, statusCode := h.Request(endpoint, method, apipath, header, query, body)
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-	// fmt.Println("=== StatusCode =", statusCode)
-	// fmt.Println(string(respBody))
-	_, err, statusCode := h.Get(endpoint, header, query)
+	respBody, err, statusCode := h.Request(endpoint, "GET", apipath, header, query, nil)
 	if err != nil {
 		log.Println(err)
 	}
 	fmt.Println("=== StatusCode =", statusCode)
+	fmt.Println(respBody)
+	// _, err, statusCode := h.Get(endpoint, header, query)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// fmt.Println("=== StatusCode =", statusCode)
 	// fmt.Println(string(respBody))
 }

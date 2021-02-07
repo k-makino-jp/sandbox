@@ -4,90 +4,137 @@ package http
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
 )
 
-func Test_httpClientImpl_Get(t *testing.T) {
-	httpMockServer := http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintf(w, "Hello HTTP Test")
-		},
-	)
+func Test_httpClientImpl_Request(t *testing.T) {
 	// configure variables
-	testQuery := map[string]string{
-		"id": "hoge",
-	}
-	testHeader := map[string]string{
-		"Api-Key": "sample api key",
-	}
+	testMethodGet := "GET"
+	testApiPath := "/apipath"
+	testQuery := map[string]string{"id": "hoge"}
+	testHeader := map[string]string{"Api-Key": "sample api key"}
+	testBody := []byte("test body")
+	expectedResponse200 := "expected response body"
+	expectedResponse401Error := "401 Unauthorized"
+
 	type args struct {
-		baseURL string
-		header  map[string]string
-		query   map[string]string
+		endpoint string
+		method   string
+		apipath  string
+		header   map[string]string
+		query    map[string]string
+		body     []byte
 	}
 	tests := []struct {
-		name           string
-		h              *httpClientImpl
-		args           args
-		wantRespBody   []byte
-		wantStatusCode int
-		wantErr        bool
+		name            string
+		h               *httpClientImpl
+		args            args
+		httpHandlerFunc http.HandlerFunc
+		wantRespBody    string
+		wantStatusCode  int
+		wantErr         string
 	}{
 		{
-			name: "httpClinetImpl.Get GetRequest ReturnsErrorEqualsNil",
+			name: "httpClientImpl.Request GetRequst ReturnsEqualsNil",
 			h:    &httpClientImpl{},
 			args: args{
-				baseURL: "",
-				header:  testHeader,
-				query:   testQuery,
+				endpoint: "",
+				method:   testMethodGet,
+				apipath:  testApiPath,
+				header:   testHeader,
+				query:    testQuery,
+				body:     testBody,
 			},
-			wantRespBody:   []byte("Hello HTTP Test"),
-			wantStatusCode: 200,
-			wantErr:        false,
+			httpHandlerFunc: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { fmt.Fprintf(w, expectedResponse200) }),
+			wantRespBody:    expectedResponse200,
+			wantStatusCode:  200,
+			wantErr:         "",
 		},
-		// {
-		// 	name: "httpClinetImpl.Get GetRequest ReturnsErrorEqualsNil",
-		// 	h:    &httpClientImpl{},
-		// 	args: args{
-		// 		baseURL: "",
-		// 		header:  testHeader,
-		// 		query:   testQuery,
-		// 	},
-		// 	httpMockServer: httptest.NewServer(
-		// 		http.HandlerFunc(
-		// 			func(w http.ResponseWriter, r *http.Request) {
-		// 				http.Error(w, "Not Found.", http.StatusNotFound)
-		// 			},
-		// 		),
-		// 	),
-		// 	wantRespBody:   []byte("Not Found."),
-		// 	wantStatusCode: 404,
-		// 	wantErr:        false,
-		// },
+		{
+			name: "httpClientImpl.Request 401Unauthorized ReturnsEqualsError",
+			h:    &httpClientImpl{},
+			args: args{
+				endpoint: "",
+				method:   testMethodGet,
+				apipath:  testApiPath,
+				header:   testHeader,
+				query:    testQuery,
+				body:     testBody,
+			},
+			httpHandlerFunc: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				http.Error(w, expectedResponse401Error, http.StatusUnauthorized)
+			}),
+			wantRespBody:   expectedResponse401Error + "\n",
+			wantStatusCode: 401,
+			wantErr:        "",
+		},
+		{
+			name: "httpClientImpl.Request UnsupportedProtcolIsSpecifed ReturnsEqualsError",
+			h:    &httpClientImpl{},
+			args: args{
+				endpoint: "WrongURL",
+				method:   testMethodGet,
+				apipath:  testApiPath,
+				header:   testHeader,
+				query:    testQuery,
+				body:     testBody,
+			},
+			httpHandlerFunc: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}),
+			wantRespBody:    "",
+			wantStatusCode:  0,
+			wantErr:         `Get "WrongURL/apipath?id=hoge": unsupported protocol scheme ""`,
+		},
+		{
+			name: "httpClientImpl.Request invalidResponseBody ReturnsEqualsError",
+			h:    &httpClientImpl{},
+			args: args{
+				endpoint: "",
+				method:   testMethodGet,
+				apipath:  testApiPath,
+				header:   testHeader,
+				query:    testQuery,
+				body:     testBody,
+			},
+			httpHandlerFunc: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.Header().Set("Content-Length", "1") }),
+			wantRespBody:    "",
+			wantStatusCode:  200,
+			wantErr:         io.ErrUnexpectedEOF.Error(),
+		},
 	}
-	ts := httptest.NewServer(httpMockServer)
-	defer ts.Close()
+
+	isErrStringEqualsWantErrString := func(err error, wantErrString string) bool {
+		errString := ""
+		if err != nil {
+			errString = err.Error()
+		}
+		if errString == wantErrString {
+			return true
+		}
+		return false
+	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var baseURL string
-			if tt.args.baseURL == "" {
-				baseURL = ts.URL
-			} else {
-				baseURL = tt.args.baseURL
+			ts := httptest.NewServer(tt.httpHandlerFunc)
+			if tt.args.endpoint == "" {
+				tt.args.endpoint = ts.URL
 			}
-			gotRespBody, err, gotStatusCode := tt.h.Get(baseURL, tt.args.header, tt.args.query)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("httpClientImpl.Get() error = %v, wantErr %v", err, tt.wantErr)
+			gotRespBody, err, gotStatusCode := tt.h.Request(tt.args.endpoint, tt.args.method, tt.args.apipath, tt.args.header, tt.args.query, tt.args.body)
+			ts.Close()
+
+			if !isErrStringEqualsWantErrString(err, tt.wantErr) {
+				t.Errorf("httpClientImpl.Request() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(gotRespBody, tt.wantRespBody) {
-				t.Errorf("httpClientImpl.Get() gotRespBody = %v, want %v", gotRespBody, tt.wantRespBody)
+			if gotRespBody != tt.wantRespBody {
+				t.Errorf("httpClientImpl.Request() gotRespBody = %v, want %v", gotRespBody, tt.wantRespBody)
 			}
 			if gotStatusCode != tt.wantStatusCode {
-				t.Errorf("httpClientImpl.Get() gotStatusCode = %v, want %v", gotStatusCode, tt.wantStatusCode)
+				t.Errorf("httpClientImpl.Request() gotStatusCode = %v, want %v", gotStatusCode, tt.wantStatusCode)
 			}
 		})
 	}
@@ -98,7 +145,10 @@ func TestNewHttpClientImpl(t *testing.T) {
 		name string
 		want *httpClientImpl
 	}{
-		// TODO: Add test cases.
+		{
+			name: "NewHttpClientImpl CreateInstance ReturnsEqualsInstance",
+			want: &httpClientImpl{},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

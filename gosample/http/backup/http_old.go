@@ -1,5 +1,5 @@
 // http is sample package
-package http
+package http_old
 
 import (
 	"bytes"
@@ -10,11 +10,29 @@ import (
 )
 
 type httpClient interface {
+	Get()
 	Request()
 }
 
 type httpClientImpl struct {
 }
+
+// func (h *httpClientImpl) Get(
+// 	baseURL string, header, query map[string]string) (
+// 	respBody string, err error, statusCode int) {
+// 	// Create a Resty Client
+// 	client := resty.New()
+// 	resp, err := client.
+// 		SetRetryCount(2).
+// 		SetRetryWaitTime(1 * time.Second).
+// 		SetRetryMaxWaitTime(5 * time.Second).
+// 		R().
+// 		SetQueryParams(query).
+// 		SetHeaders(header).
+// 		Get(baseURL)
+// 	fmt.Println(err)
+// 	return string(resp.Body()), err, resp.StatusCode()
+// }
 
 func (h *httpClientImpl) Request(
 	endpoint, method, apipath string,
