@@ -9,6 +9,7 @@ import (
 
 var (
 	ioutilReadFile = ioutil.ReadFile
+	cipherNewGCM   = cipher.NewGCM
 )
 
 // Decryptor 復号化向けインターフェース
@@ -33,7 +34,7 @@ func (d *decryptor) Decrypt() ([]byte, error) {
 		return nil, err
 	}
 	// GCMモードでラップされた128bitの暗号文ブロック取得
-	gcm, err := cipher.NewGCM(block)
+	gcm, err := cipherNewGCM(block)
 	if err != nil {
 		return nil, err
 	}

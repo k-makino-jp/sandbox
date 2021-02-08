@@ -75,6 +75,22 @@ func Test_decryptor_Decrypt(t *testing.T) {
 			testTeardown:  func() { fileDeletor(testEncryptedFilePath) },
 		},
 		{
+			name:          "decryptor.Decrypt NewGCMでErrorが発生したとき plaintext:NilおよびError:NewGCMErrorが返ってくること",
+			d:             &decryptor{encryptedFilePath: "encrypted.json", key: []byte("12345678901234567890123456789013")},
+			wantPlaintext: nil,
+			wantErr:       errors.New("NewGCM Error Occurred"),
+			testSetup: func() {
+				cipherNewGCM = func(cipher cipher.Block) (cipher.AEAD, error) {
+					return nil, errors.New("NewGCM Error Occurred")
+				}
+				fileCreator(testEncryptedFilePath, 0666)
+			},
+			testTeardown: func() {
+				cipherNewGCM = cipher.NewGCM
+				fileDeletor(testEncryptedFilePath)
+			},
+		},
+		{
 			name:          "decryptor.Decrypt 共通鍵が異なるとき plaintext:NilおよびError:CipherMessageAuthenticationFailedが返ってくること",
 			d:             &decryptor{encryptedFilePath: "encrypted.json", key: []byte("12345678901234567890123456789013")},
 			wantPlaintext: nil,
