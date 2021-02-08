@@ -51,7 +51,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 		testTeardown  func()
 	}{
 		{
-			name:          "decryptor.Decrypt 正常に復号したとき plaintext:復号した平文およびError:Nilが返ってくること",
+			name:          "decryptor.Execute 正常に復号したとき plaintext:復号した平文およびError:Nilが返ってくること",
 			d:             &decryptor{encryptedFilePath: "encrypted.json", key: testKey},
 			wantPlaintext: testPlaintext,
 			wantErr:       nil,
@@ -59,7 +59,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 			testTeardown:  func() { fileDeletor(testEncryptedFilePath) },
 		},
 		{
-			name:          "decryptor.Decrypt 暗号化されたファイルが存在しないとき plaintext:NilおよびError:ioutil.ReadFileErrorが返ってくること",
+			name:          "decryptor.Execute 暗号化されたファイルが存在しないとき plaintext:NilおよびError:ioutil.ReadFileErrorが返ってくること",
 			d:             &decryptor{encryptedFilePath: "encrypted.json", key: testKey},
 			wantPlaintext: nil,
 			wantErr:       errIoutilReadFile,
@@ -67,7 +67,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 			testTeardown:  func() { ioutilReadFile = ioutil.ReadFile },
 		},
 		{
-			name:          "decryptor.Decrypt 鍵長が31byteのとき plaintext:NilおよびError:cipher.NewCipherErrorが返ってくること",
+			name:          "decryptor.Execute 鍵長が31byteのとき plaintext:NilおよびError:cipher.NewCipherErrorが返ってくること",
 			d:             &decryptor{encryptedFilePath: "encrypted.json", key: []byte("1234567890123456789012345678901")},
 			wantPlaintext: nil,
 			wantErr:       errors.New("crypto/aes: invalid key size 31"),
@@ -75,7 +75,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 			testTeardown:  func() { fileDeletor(testEncryptedFilePath) },
 		},
 		{
-			name:          "decryptor.Decrypt NewGCMでErrorが発生したとき plaintext:NilおよびError:NewGCMErrorが返ってくること",
+			name:          "decryptor.Execute NewGCMでErrorが発生したとき plaintext:NilおよびError:NewGCMErrorが返ってくること",
 			d:             &decryptor{encryptedFilePath: "encrypted.json", key: []byte("12345678901234567890123456789013")},
 			wantPlaintext: nil,
 			wantErr:       errors.New("NewGCM Error Occurred"),
@@ -91,7 +91,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 			},
 		},
 		{
-			name:          "decryptor.Decrypt 共通鍵が異なるとき plaintext:NilおよびError:CipherMessageAuthenticationFailedが返ってくること",
+			name:          "decryptor.Execute 共通鍵が異なるとき plaintext:NilおよびError:CipherMessageAuthenticationFailedが返ってくること",
 			d:             &decryptor{encryptedFilePath: "encrypted.json", key: []byte("12345678901234567890123456789013")},
 			wantPlaintext: nil,
 			wantErr:       errors.New("cipher: message authentication failed"),
@@ -115,13 +115,13 @@ func Test_decryptor_Decrypt(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.testSetup()
-			got, err := tt.d.Decrypt()
+			got, err := tt.d.Execute()
 			if !isSameError(err, tt.wantErr) {
-				t.Errorf("decryptor.Decrypt() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("decryptor.Execute() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.wantPlaintext) {
-				t.Errorf("decryptor.Decrypt() = %v, want %v", got, tt.wantPlaintext)
+				t.Errorf("decryptor.Execute() = %v, want %v", got, tt.wantPlaintext)
 			}
 			tt.testTeardown()
 		})
