@@ -20,7 +20,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 	testEncryptedFilePath := "encrypted.json"
 	// errors
 	errIoutilReadFile := errors.New("ioutil.Readfile error occurred")
-	// errCipherNewGCMError := errors.New("cipher.NewGCM error occurred")
+	errNewGCM := errors.New("NewGCM Error Occurred")
 	// functions
 	fileCreator := func(filepath string, perm os.FileMode) {
 		block, _ := aes.NewCipher(testKey)
@@ -31,7 +31,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 		io.ReadFull(rand.Reader, nonce)
 		ciphertext := gcm.Seal(nonce, nonce, testPlaintext, nil)
 		// write file
-		err := ioutil.WriteFile(filepath, ciphertext, 0755)
+		err := ioutil.WriteFile(filepath, ciphertext, perm)
 		if err != nil {
 			fmt.Println("[TEST WARNING] failed to create data file.", filepath)
 		}
@@ -59,7 +59,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 			testTeardown:  func() { fileDeletor(testEncryptedFilePath) },
 		},
 		{
-			name:          "decryptor.Execute 暗号化されたファイルが存在しないとき plaintext:NilおよびError:ioutil.ReadFileErrorが返ってくること",
+			name:          "decryptor.Execute 暗号ファイルが存在しないとき Errorとしてioutil.ReadFileErrorが返ってくること",
 			d:             &decryptor{encryptedFilePath: "encrypted.json", key: testKey},
 			wantPlaintext: nil,
 			wantErr:       errIoutilReadFile,
@@ -67,7 +67,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 			testTeardown:  func() { ioutilReadFile = ioutil.ReadFile },
 		},
 		{
-			name:          "decryptor.Execute 鍵長が31byteのとき plaintext:NilおよびError:cipher.NewCipherErrorが返ってくること",
+			name:          "decryptor.Execute 鍵長が31byteのとき Errorとしてcipher.NewCipherErrorが返ってくること",
 			d:             &decryptor{encryptedFilePath: "encrypted.json", key: []byte("1234567890123456789012345678901")},
 			wantPlaintext: nil,
 			wantErr:       errors.New("crypto/aes: invalid key size 31"),
@@ -75,23 +75,21 @@ func Test_decryptor_Decrypt(t *testing.T) {
 			testTeardown:  func() { fileDeletor(testEncryptedFilePath) },
 		},
 		{
-			name:          "decryptor.Execute NewGCMでErrorが発生したとき plaintext:NilおよびError:NewGCMErrorが返ってくること",
+			name:          "decryptor.Execute NewGCMでErrorが発生したとき ErrorとしてNewGCMErrorが返ってくること",
 			d:             &decryptor{encryptedFilePath: "encrypted.json", key: []byte("12345678901234567890123456789013")},
 			wantPlaintext: nil,
-			wantErr:       errors.New("NewGCM Error Occurred"),
+			wantErr:       errNewGCM,
 			testSetup: func() {
-				cipherNewGCM = func(cipher cipher.Block) (cipher.AEAD, error) {
-					return nil, errors.New("NewGCM Error Occurred")
-				}
 				fileCreator(testEncryptedFilePath, 0666)
+				cipherNewGCM = func(cipher cipher.Block) (cipher.AEAD, error) { return nil, errNewGCM }
 			},
 			testTeardown: func() {
-				cipherNewGCM = cipher.NewGCM
 				fileDeletor(testEncryptedFilePath)
+				cipherNewGCM = cipher.NewGCM
 			},
 		},
 		{
-			name:          "decryptor.Execute 共通鍵が異なるとき plaintext:NilおよびError:CipherMessageAuthenticationFailedが返ってくること",
+			name:          "decryptor.Execute 共通鍵が暗号時と異なるとき Error:CipherMとしてMessageAuthenticationFailedが返ってくること",
 			d:             &decryptor{encryptedFilePath: "encrypted.json", key: []byte("12345678901234567890123456789013")},
 			wantPlaintext: nil,
 			wantErr:       errors.New("cipher: message authentication failed"),
