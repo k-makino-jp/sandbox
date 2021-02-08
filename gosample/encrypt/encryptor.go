@@ -1,3 +1,4 @@
+// package encrypt 暗号化向けパッケージ
 package encrypt
 
 import (
@@ -6,55 +7,58 @@ import (
 	"crypto/rand"
 	"io"
 	"io/ioutil"
-	"log"
 )
 
+// 暗号化向けインターフェース
 type Encryptor interface {
-	Encrypt()
+	Execute()
 }
 
-type EncryptorImpl struct {
-	inputFilePath  string
-	outputFilePath string
+type encryptor struct {
+	key               []byte
+	plaintextFilePath string
+	encryptedFilePath string
 }
 
+// Execute 暗号化処理関数
 // cipher algorithm: AES-256 GCM Mode
-func (e *EncryptorImpl) Encrypt() {
-	plaintext, err := ioutil.ReadFile(e.inputFilePath)
+func (e *encryptor) Execute() error {
+	plaintext, err := ioutil.ReadFile(e.plaintextFilePath)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	// The key should be 32 bytes (256 bytes) (AES-256)
-	key := []byte("12345678901234567890123456789012")
-	block, err := aes.NewCipher(key)
+	block, err := aes.NewCipher(e.key)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
-		log.Panic(err)
+		return err
 	}
 
 	// nonce is an arbitrary number that can be used just once in a cryptographic communication.
 	// gcm.NonceSize() equals 12
 	nonce := make([]byte, gcm.NonceSize())
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	ciphertext := gcm.Seal(nonce, nonce, plaintext, nil)
 
-	err = ioutil.WriteFile(e.outputFilePath, ciphertext, 0755)
+	err = ioutil.WriteFile(e.encryptedFilePath, ciphertext, 0666)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+	return nil
 }
 
-func NewEncryptorImpl(input, output string) *EncryptorImpl {
-	return &EncryptorImpl{
-		inputFilePath:  input,
-		outputFilePath: output,
+func NewEncryptor(key []byte, plaintextFilePath, encryptedFilePath string) *encryptor {
+	return &encryptor{
+		key:               key,
+		plaintextFilePath: plaintextFilePath,
+		encryptedFilePath: encryptedFilePath,
 	}
 }
