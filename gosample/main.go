@@ -3,8 +3,7 @@ package main
 import (
 	"fmt"
 	"gosample/hoge/configer"
-	"gosample/hoge/decryptor"
-	"gosample/hoge/encryptor"
+	"gosample/hoge/encrypt"
 	"gosample/hoge/http"
 	"gosample/hoge/printer"
 	"log"
@@ -67,13 +66,13 @@ func main() {
 	// encryptor
 	input := "plaintext.json"
 	output := "encrypted.json"
-	e := encryptor.NewEncryptorImpl(input, output)
+	e := encrypt.NewEncryptorImpl(input, output)
 	e.Encrypt()
 
 	// decryptor
 	input = "encrypted.json"
 	output = "decrypted.json"
-	d := decryptor.NewDecryptorImpl(input, output)
+	d := decrypt.NewDecryptorImpl(input, output)
 	// The key should be 32 bytes (AES-256)
 	key := []byte("12345678901234567890123456789012")
 	d.Decrypt(key)

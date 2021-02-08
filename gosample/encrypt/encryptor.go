@@ -1,4 +1,4 @@
-package encryptor
+package encrypt
 
 import (
 	"crypto/aes"
