@@ -22,7 +22,7 @@ type encryptor struct {
 
 // Execute 暗号化処理関数
 // cipher algorithm: AES-256 GCM Mode
-func (e *encryptor) Execute() error {
+func (e encryptor) Execute() error {
 	plaintext, err := ioutil.ReadFile(e.plaintextFilePath)
 	if err != nil {
 		return err

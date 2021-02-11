@@ -23,7 +23,7 @@ type decryptor struct {
 }
 
 // Execute 復号処理関数
-func (d *decryptor) Execute() ([]byte, error) {
+func (d decryptor) Execute() ([]byte, error) {
 	ciphertext, err := ioutilReadFile(d.encryptedFilePath)
 	if err != nil {
 		return nil, err

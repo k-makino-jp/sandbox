@@ -44,7 +44,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 	// tests
 	tests := []struct {
 		name          string
-		d             *decryptor
+		d             decryptor
 		wantPlaintext []byte
 		wantErr       error
 		testSetup     func()
@@ -52,7 +52,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 	}{
 		{
 			name:          "decryptor.Execute 正常に復号したとき plaintext:復号した平文およびError:Nilが返ってくること",
-			d:             &decryptor{encryptedFilePath: "encrypted.json", key: testKey},
+			d:             decryptor{encryptedFilePath: "encrypted.json", key: testKey},
 			wantPlaintext: testPlaintext,
 			wantErr:       nil,
 			testSetup:     func() { fileCreator(testEncryptedFilePath, 0666) },
@@ -60,7 +60,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 		},
 		{
 			name:          "decryptor.Execute 暗号ファイルが存在しないとき Errorとしてioutil.ReadFileErrorが返ってくること",
-			d:             &decryptor{encryptedFilePath: "encrypted.json", key: testKey},
+			d:             decryptor{encryptedFilePath: "encrypted.json", key: testKey},
 			wantPlaintext: nil,
 			wantErr:       errIoutilReadFile,
 			testSetup:     func() { ioutilReadFile = func(string) ([]byte, error) { return nil, errIoutilReadFile } },
@@ -68,7 +68,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 		},
 		{
 			name:          "decryptor.Execute 鍵長が31byteのとき Errorとしてcipher.NewCipherErrorが返ってくること",
-			d:             &decryptor{encryptedFilePath: "encrypted.json", key: []byte("1234567890123456789012345678901")},
+			d:             decryptor{encryptedFilePath: "encrypted.json", key: []byte("1234567890123456789012345678901")},
 			wantPlaintext: nil,
 			wantErr:       errors.New("crypto/aes: invalid key size 31"),
 			testSetup:     func() { fileCreator(testEncryptedFilePath, 0666) },
@@ -76,7 +76,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 		},
 		{
 			name:          "decryptor.Execute NewGCMでErrorが発生したとき ErrorとしてNewGCMErrorが返ってくること",
-			d:             &decryptor{encryptedFilePath: "encrypted.json", key: []byte("12345678901234567890123456789013")},
+			d:             decryptor{encryptedFilePath: "encrypted.json", key: []byte("12345678901234567890123456789013")},
 			wantPlaintext: nil,
 			wantErr:       errNewGCM,
 			testSetup: func() {
@@ -90,7 +90,7 @@ func Test_decryptor_Decrypt(t *testing.T) {
 		},
 		{
 			name:          "decryptor.Execute 共通鍵が暗号時と異なるとき Error:CipherMとしてMessageAuthenticationFailedが返ってくること",
-			d:             &decryptor{encryptedFilePath: "encrypted.json", key: []byte("12345678901234567890123456789013")},
+			d:             decryptor{encryptedFilePath: "encrypted.json", key: []byte("12345678901234567890123456789013")},
 			wantPlaintext: nil,
 			wantErr:       errors.New("cipher: message authentication failed"),
 			testSetup:     func() { fileCreator(testEncryptedFilePath, 0666) },
