@@ -18,16 +18,12 @@ type Decryptor interface {
 }
 
 type decryptor struct {
-	key               []byte
-	encryptedFilePath string
+	key        []byte
+	ciphertext []byte
 }
 
 // Execute 復号処理関数
 func (d decryptor) Execute() ([]byte, error) {
-	ciphertext, err := ioutilReadFile(d.encryptedFilePath)
-	if err != nil {
-		return nil, err
-	}
 	// 暗号文ブロック生成
 	block, err := aes.NewCipher(d.key)
 	if err != nil {
@@ -39,9 +35,9 @@ func (d decryptor) Execute() ([]byte, error) {
 		return nil, err
 	}
 	// 復号化
-	nonce := ciphertext[:gcm.NonceSize()]
-	ciphertext = ciphertext[gcm.NonceSize():]
-	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
+	nonce := d.ciphertext[:gcm.NonceSize()]
+	d.ciphertext = d.ciphertext[gcm.NonceSize():]
+	plaintext, err := gcm.Open(nil, nonce, d.ciphertext, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -49,9 +45,9 @@ func (d decryptor) Execute() ([]byte, error) {
 }
 
 // NewDecyptor コンストラクタ
-func NewDecryptor(key []byte, encrypted string) *decryptor {
+func NewDecryptor(key, ciphertext []byte) *decryptor {
 	return &decryptor{
-		key:               key,
-		encryptedFilePath: encrypted,
+		key:        key,
+		ciphertext: ciphertext,
 	}
 }
