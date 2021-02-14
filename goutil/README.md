@@ -1,34 +1,5 @@
 # gosample
 
-## メモ
-
-### Frameworks and Drivers Layer
-
-* DB
-* Web
-* Devices
-* UI
-  * cli
-
-### Interface Adapters Layer
-
-* Controllers
-  * encrypt
-  * decrypt
-* Gateways
-* Presenters
-  * subcmd
-
-### Application Business Rules Layer
-
-* Use Cases:
-  * read config
-
-### Enterprise Business Rules:
-
-* Entities
-  * config
-
 ## Golangの利用開始
 
 * `$GOPATH`を確認

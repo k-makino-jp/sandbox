@@ -1,5 +1,4 @@
-// package entity 暗号化向けパッケージ
-package entity
+package config
 
 type Config struct {
 	endpoint string
