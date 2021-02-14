@@ -1,8 +1,13 @@
+// Frameworks and Drivers: cli
+// Interface Adapters: usecase caller
+// Application Business Rules: usecase
+// Enterprise Business Rules: service, model
 package main
 
 import (
 	"fmt"
-	"sandbox/goutil/pkg/http"
+	"sandbox/goutil/pkg/01_interface/subcmd"
+	"sandbox/goutil/pkg/02_usecase/http"
 	"time"
 )
 
@@ -20,4 +25,5 @@ func httpRequest() {
 
 func main() {
 	httpRequest()
+	subcmd.HttpRequest()
 }
