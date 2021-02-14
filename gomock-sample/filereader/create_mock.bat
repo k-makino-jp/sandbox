@@ -1,1 +1,0 @@
-mockgen -source filereader.go -destination mock/mock_filereader.go
