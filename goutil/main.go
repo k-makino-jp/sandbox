@@ -19,5 +19,5 @@ func httpRequest() {
 }
 
 func main() {
-
+	httpRequest()
 }
