@@ -9,5 +9,7 @@ require (
 	github.com/hashicorp/go-retryablehttp v0.6.8
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/kelseyhightower/envconfig v1.4.0
+	golang.org/x/lint v0.0.0-20201208152925-83fdc39ff7b5 // indirect
 	golang.org/x/text v0.3.3
+	golang.org/x/tools v0.1.0 // indirect
 )
