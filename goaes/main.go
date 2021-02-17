@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gosample/pkg/azure"
+	"gosample/pkg/azurev2"
 )
 
 // func httpRequest() {
@@ -17,10 +17,10 @@ import (
 // }
 
 func AzureEnqueue() {
-	message := azure.Message{
+	message := azurev2.Message{
 		Data: "data",
 	}
-	azure := azure.NewAzure()
+	azure := azurev2.NewAzure()
 	azure.Enqueue(message)
 }
 

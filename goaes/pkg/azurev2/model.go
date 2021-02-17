@@ -1,5 +1,5 @@
 // azure is sample package
-package azure
+package azurev2
 
 type Message struct {
 	Data string `json:"data"`
