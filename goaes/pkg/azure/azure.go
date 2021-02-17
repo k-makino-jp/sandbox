@@ -4,15 +4,20 @@ package azure
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"time"
 
 	"github.com/Azure/azure-storage-queue-go/azqueue"
 )
 
-// Azure
+var (
+	queueEndpoint = "https://myaccount.queue.core.windows.net/images-to-download"
+)
+
+// Azure Queue Storage処理向けインターフェース
 type Azure interface {
-	enqueue()
+	Enqueue()
 }
 
 type azure struct{}
@@ -20,13 +25,13 @@ type azure struct{}
 // Example:
 // https://github.com/Azure/azure-storage-queue-go/blob/master/azqueue/zt_examples_test.go#L25
 // Put messages: https://docs.microsoft.com/ja-jp/rest/api/storageservices/put-message
-func (a *azure) enqueue(queueEndpoint string, message Message) error {
+func (a azure) Enqueue(message Message) error {
 	// create json data
 	jsonBytes, err := json.Marshal(message)
 	if err != nil {
 		return err
 	}
-	jsonMessage := string(jsonBytes)
+	messageText := string(jsonBytes)
 
 	// Create a request pipeline that is used to process HTTP(S) requests and responses..
 	pipelineOption := azqueue.PipelineOptions{
@@ -60,16 +65,19 @@ func (a *azure) enqueue(queueEndpoint string, message Message) error {
 
 	visibilityTimeout := time.Second * 0
 	timeToLive := time.Minute
+	// https://pkg.go.dev/github.com/Azure/azure-storage-queue-go/azqueue#MessagesURL.Enqueue
 	_, err = messageURL.Enqueue(
 		ctx,
-		jsonMessage,
+		messageText,
 		visibilityTimeout,
 		timeToLive, // メッセージの有効期限
 	)
-	if err != nil {
-		return err
-	}
-	return nil
+	// fmt.Println(enqueueMessageResponse)
+	// Status returns the HTTP status message of the response, e.g. "200 OK".
+	// fmt.Println(enqueueMessageResponse.StatusCode())
+	fmt.Println(err)
+	//
+	return err
 }
 
 // NewAzure コンストラクタ
