@@ -4,7 +4,7 @@ package azurev2
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -20,7 +20,8 @@ type Azure interface {
 	Enqueue()
 }
 
-type messageURLEnqueue interface {
+type messagesURLEnqueue interface {
+	// azqueue.MessagesURL.Enqueue
 	Enqueue(
 		ctx context.Context,
 		messageText string,
@@ -30,17 +31,17 @@ type messageURLEnqueue interface {
 }
 
 type azure struct {
-	enqueue messageURLEnqueue
+	enqueue messagesURLEnqueue
 }
 
 // Example:
 // https://github.com/Azure/azure-storage-queue-go/blob/master/azqueue/zt_examples_test.go#L25
 // Put messages: https://docs.microsoft.com/ja-jp/rest/api/storageservices/put-message
-func (a azure) Enqueue(message Message) error {
+func (a azure) Enqueue(message Message) (int, error) {
 	// create json data
 	jsonBytes, err := json.Marshal(message)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	messageText := string(jsonBytes)
 
@@ -50,18 +51,22 @@ func (a azure) Enqueue(message Message) error {
 	visibilityTimeout := time.Second * 0
 	timeToLive := time.Minute
 	// https://pkg.go.dev/github.com/Azure/azure-storage-queue-go/azqueue#MessagesURL.Enqueue
-	_, err = a.enqueue.Enqueue(
+	enqueueMessageResponse, err := a.enqueue.Enqueue(
 		ctx,
 		messageText,
 		visibilityTimeout,
 		timeToLive, // メッセージの有効期限
 	)
-	// fmt.Println(enqueueMessageResponse)
-	// Status returns the HTTP status message of the response, e.g. "200 OK".
-	// fmt.Println(enqueueMessageResponse.StatusCode())
-	fmt.Println(err)
-	//
-	return err
+	statusCode := enqueueMessageResponse.StatusCode()
+	if statusCode == http.StatusCreated {
+		// fmt.Println(enqueueMessageResponse.Response())
+		// Status returns the HTTP status message of the response, e.g. "200 OK".
+		// fmt.Println(enqueueMessageResponse.StatusCode())
+		return statusCode, nil
+	} else if statusCode == http.StatusUnauthorized || statusCode == http.StatusForbidden {
+		return statusCode, err
+	}
+	return statusCode, err
 }
 
 // NewAzure コンストラクタ
@@ -82,11 +87,27 @@ func NewAzure() *azure {
 		azqueue.NewAnonymousCredential(), // A pipeline always requires some credential object
 		pipelineOption,
 	)
+	// Configure sas
 	url, _ := url.Parse(queueEndpoint)
-	// if err != nil {
-	// 	return err
-	// }
-	// Create a URL
-	messageURL := azqueue.NewMessagesURL(*url, pipeline)
-	return &azure{messageURL}
+	query := getSasQueryMap(sas{}, url.Query())
+	url.RawQuery = query.Encode()
+
+	// Create a messagesURL object
+	// XxxURL object contains a URL and a request pipeline.
+	messagesURL := azqueue.NewMessagesURL(*url, pipeline)
+	return &azure{messagesURL}
+}
+
+type sas struct {
+	st string
+}
+
+func getSasQueryMap(sas sas, query url.Values) url.Values {
+	sasQueryMap := map[string]string{
+		"sig": sas.st,
+	}
+	for key, value := range sasQueryMap {
+		query.Set(key, value)
+	}
+	return query
 }
