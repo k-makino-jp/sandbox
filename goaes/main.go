@@ -20,7 +20,7 @@ func AzureEnqueue() {
 	message := azurev2.Message{
 		Data: "data",
 	}
-	azure := azurev2.NewAzure()
+	azure := azurev2.NewAzure(azurev2.Sas{})
 	azure.Enqueue(message)
 }
 

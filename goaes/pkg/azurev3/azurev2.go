@@ -4,7 +4,7 @@ package azurev2
 import (
 	"context"
 	"encoding/json"
-	"net/http"
+	"fmt"
 	"net/url"
 	"time"
 
@@ -20,6 +20,7 @@ type Azure interface {
 	Enqueue()
 }
 
+// https://pkg.go.dev/github.com/Azure/azure-storage-queue-go/azqueue#MessagesURL.Enqueue
 type messagesURLEnqueue interface {
 	// azqueue.MessagesURL.Enqueue
 	Enqueue(
@@ -30,47 +31,78 @@ type messagesURLEnqueue interface {
 	) (*azqueue.EnqueueMessageResponse, error)
 }
 
+// https://pkg.go.dev/github.com/Azure/azure-storage-queue-go/azqueue#EnqueueMessageResponse
+// type enqueueMessageResponse interface {
+// 	Date() time.Time
+// 	RequestID() string
+// 	Response() *http.Response
+// 	Status() string
+// 	StatusCode() int
+// 	Version() string
+// }
+
 type azure struct {
-	enqueue messagesURLEnqueue
+	messagesURLEnqueue messagesURLEnqueue
 }
 
-// Example:
-// https://github.com/Azure/azure-storage-queue-go/blob/master/azqueue/zt_examples_test.go#L25
-// Put messages: https://docs.microsoft.com/ja-jp/rest/api/storageservices/put-message
-func (a azure) Enqueue(message Message) (int, error) {
-	// create json data
-	jsonBytes, err := json.Marshal(message)
-	if err != nil {
-		return 0, err
-	}
-	messageText := string(jsonBytes)
+// type assertion
+func isEnqueueMessageResponsePointer(interfaceImpl interface{}) bool {
+	_, ok := interfaceImpl.(*enqueueMessageResponse)
+	return ok
+}
 
+func (a azure) convertStructToJSONText(v interface{}) (string, error) {
+	jsonBytes, err := json.Marshal(v)
+	if err != nil {
+		return "", err
+	}
+	return string(jsonBytes), nil
+}
+
+func (a azure) enqueue(messageText string) (*azqueue.EnqueueMessageResponse, error) {
 	// All HTTP operations allow you to specify a Go context.Context object to control cancellation/timeout.
 	ctx := context.TODO()
 
+	// https://pkg.go.dev/github.com/Azure/azure-storage-queue-go/azqueue#MessagesURL.Enqueue
 	visibilityTimeout := time.Second * 0
 	timeToLive := time.Minute
-	// https://pkg.go.dev/github.com/Azure/azure-storage-queue-go/azqueue#MessagesURL.Enqueue
-	enqueueMessageResponse, err := a.enqueue.Enqueue(
+	enqueueMessageResponse, err := a.messagesURLEnqueue.Enqueue(
 		ctx,
 		messageText,
 		visibilityTimeout,
 		timeToLive, // メッセージの有効期限
 	)
-	statusCode := enqueueMessageResponse.StatusCode()
-	if statusCode == http.StatusCreated {
-		// fmt.Println(enqueueMessageResponse.Response())
-		// Status returns the HTTP status message of the response, e.g. "200 OK".
-		// fmt.Println(enqueueMessageResponse.StatusCode())
-		return statusCode, nil
-	} else if statusCode == http.StatusUnauthorized || statusCode == http.StatusForbidden {
-		return statusCode, err
+	fmt.Println(enqueueMessageResponse.StatusCode())
+	return nil, err
+}
+
+// func (a azure) checkStatusCode(enqueueMessageResponse azqueue.EnqueueMessageResponse) (int, error) {
+// 	statusCode := enqueueMessageResponse.StatusCode()
+// 	if statusCode == http.StatusCreated {
+// 		return statusCode, nil
+// 	}
+// 	return statusCode, errors.New("Server connection error occurred")
+// }
+
+// Example:
+// https://github.com/Azure/azure-storage-queue-go/blob/master/azqueue/zt_examples_test.go#L25
+// Put messages: https://docs.microsoft.com/ja-jp/rest/api/storageservices/put-message
+func (a azure) Enqueue(message Message) (int, error) {
+	messageText, err := a.convertStructToJSONText(message)
+	if err != nil {
+		return 0, err
 	}
-	return statusCode, err
+	var e enqueueMessageResponse
+	e, err = a.enqueue(messageText)
+	if err != nil {
+		return 0, err
+	}
+	en := e.(azqueue.EnqueueMessageResponse)
+	return a.checkStatusCode(en)
 }
 
 // NewAzure コンストラクタ
-func NewAzure() *azure {
+func NewAzure(sas Sas) *azure {
 	// Create a request pipeline that is used to process HTTP(S) requests and responses..
 	pipelineOption := azqueue.PipelineOptions{
 		Retry: azqueue.RetryOptions{
@@ -87,27 +119,19 @@ func NewAzure() *azure {
 		azqueue.NewAnonymousCredential(), // A pipeline always requires some credential object
 		pipelineOption,
 	)
+
 	// Configure sas
-	url, _ := url.Parse(queueEndpoint)
-	query := getSasQueryMap(sas{}, url.Query())
-	url.RawQuery = query.Encode()
+	URL, _ := url.Parse(queueEndpoint)
+	query := url.Values{}
+	query.Set("sv", sas.Sv)
+	URL.RawQuery = query.Encode()
 
 	// Create a messagesURL object
 	// XxxURL object contains a URL and a request pipeline.
-	messagesURL := azqueue.NewMessagesURL(*url, pipeline)
+	messagesURL := azqueue.NewMessagesURL(*URL, pipeline)
 	return &azure{messagesURL}
 }
 
-type sas struct {
-	st string
-}
-
-func getSasQueryMap(sas sas, query url.Values) url.Values {
-	sasQueryMap := map[string]string{
-		"sig": sas.st,
-	}
-	for key, value := range sasQueryMap {
-		query.Set(key, value)
-	}
-	return query
+type Sas struct {
+	Sv string
 }

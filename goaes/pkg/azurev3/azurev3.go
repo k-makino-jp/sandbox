@@ -1,5 +1,5 @@
-// Package azure REST
-package azure
+// azure is sample package
+package azurev2
 
 import (
 	"context"
@@ -28,13 +28,16 @@ type messagesURLEnqueue interface {
 		messageText string,
 		visibilityTimeout time.Duration,
 		timeToLive time.Duration,
-	) (*azqueue.EnqueueMessageResponse, error) // cannot convert struct to interface
+	) (*azqueue.EnqueueMessageResponse, error)
 }
 
 type enqueueMessageResponse interface {
-	// use azqueue.EnqueueMessageResponse
-	Response(*azqueue.EnqueueMessageResponse) []byte
-	StatusCode(*azqueue.EnqueueMessageResponse) int
+	Date() time.Time
+	RequestID() string
+	Response() *http.Response
+	Status() string
+	StatusCode() int
+	Version() string
 }
 
 type azure struct {
@@ -55,17 +58,19 @@ func (a azure) Enqueue(message Message) (int, error) {
 	ctx := context.TODO()
 	visibilityTimeout := time.Second * 0
 	timeToLive := time.Minute
-	enqueueMessageResponse, err := a.messagesURLEnqueue.Enqueue(
+	temp, err := a.messagesURLEnqueue.Enqueue(
 		ctx,
 		messageText,
-		visibilityTimeout, // 可視性タイムアウト
-		timeToLive,        // メッセージの有効期限
+		visibilityTimeout,
+		timeToLive, // メッセージの有効期限
 	)
+	a.enqueueMessageResponse = *temp
+	// return 0, err
 	if err != nil {
 		return 0, err
 	}
 	// status code check
-	statusCode := a.enqueueMessageResponse.StatusCode(enqueueMessageResponse)
+	statusCode := a.enqueueMessageResponse.StatusCode()
 	if statusCode == http.StatusCreated {
 		return statusCode, nil
 	}
@@ -88,6 +93,10 @@ var (
 		},
 	)
 )
+
+// type NewPipeline interface {
+// 	NewPipeline(c azqueue.Credential, o azqueue.PipelineOptions) pipeline.Pipeline
+// }
 
 // NewAzure コンストラクタ
 func NewAzure(sas Sas) *azure {
