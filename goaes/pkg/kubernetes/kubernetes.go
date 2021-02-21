@@ -7,6 +7,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/wait"
 	k8s "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/util/retry"
@@ -19,8 +20,19 @@ const (
 // Kubernetes Kubernetes REST API処理用インターフェース
 type Kubernetes interface{}
 
+type retryOnConflict interface {
+	retry(backoff wait.Backoff, fn func() error) error
+}
+
+type retryOnConflictImpl struct{}
+
+func (r retryOnConflictImpl) retry(backoff wait.Backoff, fn func() error) error {
+	return retry.RetryOnConflict(backoff, fn)
+}
+
 type kubernetes struct {
 	clientset           k8s.Interface
+	retryOnConflict     retryOnConflict
 	podInfo             downwardapi.PodInfo
 	pod                 *corev1.Pod
 	namespacePod        *corev1.Namespace
@@ -36,8 +48,7 @@ func (k *kubernetes) getPods() (err error) {
 		k.pod, err = k.clientset.CoreV1().Pods(k.podInfo.Namespace).Get(context.TODO(), k.podInfo.PodName, metav1.GetOptions{})
 		return err
 	}
-	err = retry.RetryOnConflict(retry.DefaultRetry, apiCaller)
-	return err
+	return k.retryOnConflict.retry(retry.DefaultRetry, apiCaller)
 }
 
 func (k *kubernetes) getNodeList() (err error) {
@@ -47,8 +58,7 @@ func (k *kubernetes) getNodeList() (err error) {
 		k.nodeList, err = k.clientset.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 		return err
 	}
-	err = retry.RetryOnConflict(retry.DefaultRetry, apiCaller)
-	return err
+	return retry.RetryOnConflict(retry.DefaultRetry, apiCaller)
 }
 
 func (k *kubernetes) getNamespaceKubeSystem() (err error) {
@@ -59,8 +69,7 @@ func (k *kubernetes) getNamespaceKubeSystem() (err error) {
 		k.namespaceKubeSystem, err = k.clientset.CoreV1().Namespaces().Get(context.TODO(), namespaceKubeSystem, metav1.GetOptions{})
 		return err
 	}
-	err = retry.RetryOnConflict(retry.DefaultRetry, apiCaller)
-	return err
+	return retry.RetryOnConflict(retry.DefaultRetry, apiCaller)
 }
 
 func (k *kubernetes) getNamespacePod() (err error) {
@@ -71,8 +80,7 @@ func (k *kubernetes) getNamespacePod() (err error) {
 		k.namespacePod, err = k.clientset.CoreV1().Namespaces().Get(context.TODO(), k.podInfo.Namespace, metav1.GetOptions{})
 		return err
 	}
-	err = retry.RetryOnConflict(retry.DefaultRetry, apiCaller)
-	return err
+	return retry.RetryOnConflict(retry.DefaultRetry, apiCaller)
 }
 
 // GetInfo Kubernetes情報取得関数
@@ -106,7 +114,8 @@ func NewKubernetes(podInfo downwardapi.PodInfo) (*kubernetes, error) {
 		return nil, err
 	}
 	return &kubernetes{
-		clientset: clientset,
-		podInfo:   podInfo,
+		clientset:       clientset,
+		retryOnConflict: retryOnConflictImpl{},
+		podInfo:         podInfo,
 	}, err
 }
