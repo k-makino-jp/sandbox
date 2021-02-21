@@ -79,6 +79,7 @@ func main() {
 	// 	log.Fatal(err)
 	// }
 
+	var err error
 	if !*dec {
 		err = execEncrypt()
 	} else {
