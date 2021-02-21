@@ -3,11 +3,17 @@ package kubernetes
 
 import (
 	"context"
+	"gosample/pkg/downwardapi"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	k8s "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/util/retry"
+)
+
+const (
+	namespaceKubeSystem = "kube-system"
 )
 
 // Kubernetes Kubernetes REST API処理用インターフェース
@@ -15,56 +21,57 @@ type Kubernetes interface{}
 
 type kubernetes struct {
 	clientset           k8s.Interface
+	podInfo             downwardapi.PodInfo
 	pod                 *corev1.Pod
 	namespacePod        *corev1.Namespace
 	nodeList            *corev1.NodeList
 	namespaceKubeSystem *corev1.Namespace
 }
 
-func (k *kubernetes) getPods() error {
-	// /api/v1/pods/{podInfo.podName}
-	// https://pkg.go.dev/k8s.io/client-go/kubernetes/typed/core/v1#PodInterface
-	// ctx := context.TODO()
-	name := "podName"
-	opts := metav1.GetOptions{
-		TypeMeta:        metav1.TypeMeta{},
-		ResourceVersion: "",
+// https://pkg.go.dev/k8s.io/client-go/kubernetes/typed/core/v1#PodInterface
+func (k *kubernetes) getPods() (err error) {
+	// GET /api/v1/namespaces/{namespace}/pods/{name}
+	// https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#-strong-read-operations-pod-v1-core-strong-
+	apiCaller := func() error {
+		k.pod, err = k.clientset.CoreV1().Pods(k.podInfo.Namespace).Get(context.TODO(), k.podInfo.PodName, metav1.GetOptions{})
+		return err
 	}
-	pod, err := k.clientset.CoreV1().Pods("namespace").Get(context.TODO(), name, opts)
-	k.pod = pod
+	err = retry.RetryOnConflict(retry.DefaultRetry, apiCaller)
 	return err
 }
 
-func (k *kubernetes) getNodeList() error {
-	// /api/v1/nodes
-	listOptions := metav1.ListOptions{
-		TypeMeta:             metav1.TypeMeta{},
-		LabelSelector:        "",
-		FieldSelector:        "",
-		Watch:                false,
-		AllowWatchBookmarks:  false,
-		ResourceVersion:      "",
-		ResourceVersionMatch: "",
-		TimeoutSeconds:       new(int64),
-		Limit:                0,
-		Continue:             "",
+func (k *kubernetes) getNodeList() (err error) {
+	// GET /api/v1/nodes
+	// https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#list-node-v1-core
+	apiCaller := func() error {
+		k.nodeList, err = k.clientset.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+		return err
 	}
-	nodeList, err := k.clientset.CoreV1().Nodes().List(context.TODO(), listOptions)
-	k.nodeList = nodeList
+	err = retry.RetryOnConflict(retry.DefaultRetry, apiCaller)
 	return err
 }
 
-func (k *kubernetes) getNamespaceKubeSystem() error {
-	// kube-system
-	namespaceKubeSystem, err := k.clientset.CoreV1().Namespaces().Get(context.TODO(), "kube-system", metav1.GetOptions{})
-	k.namespaceKubeSystem = namespaceKubeSystem
+func (k *kubernetes) getNamespaceKubeSystem() (err error) {
+	// GET /api/v1/namespaces/{name}
+	// name: name of the kube-system namespace
+	// https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#-strong-read-operations-namespace-v1-core-strong-
+	apiCaller := func() error {
+		k.namespaceKubeSystem, err = k.clientset.CoreV1().Namespaces().Get(context.TODO(), namespaceKubeSystem, metav1.GetOptions{})
+		return err
+	}
+	err = retry.RetryOnConflict(retry.DefaultRetry, apiCaller)
 	return err
 }
 
-func (k *kubernetes) getNamespacePod() error {
-	// kube-system
-	namespacePod, err := k.clientset.CoreV1().Namespaces().Get(context.TODO(), "podnamespace", metav1.GetOptions{})
-	k.namespacePod = namespacePod
+func (k *kubernetes) getNamespacePod() (err error) {
+	// GET /api/v1/namespaces/{name}
+	// name: name of the pod namespace
+	// https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#-strong-read-operations-namespace-v1-core-strong-
+	apiCaller := func() error {
+		k.namespacePod, err = k.clientset.CoreV1().Namespaces().Get(context.TODO(), k.podInfo.Namespace, metav1.GetOptions{})
+		return err
+	}
+	err = retry.RetryOnConflict(retry.DefaultRetry, apiCaller)
 	return err
 }
 
@@ -86,7 +93,7 @@ func (k kubernetes) GetInfo() (Info, error) {
 }
 
 // NewKubernetes コンストラクタ
-func NewKubernetes() (*kubernetes, error) {
+func NewKubernetes(podInfo downwardapi.PodInfo) (*kubernetes, error) {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		return nil, err
@@ -98,5 +105,8 @@ func NewKubernetes() (*kubernetes, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &kubernetes{clientset: clientset}, err
+	return &kubernetes{
+		clientset: clientset,
+		podInfo:   podInfo,
+	}, err
 }

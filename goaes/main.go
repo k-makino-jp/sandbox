@@ -25,6 +25,19 @@ func AzureEnqueue() {
 	a.Enqueue(message)
 }
 
+// func KubernetesAPI() {
+// 	k, err := kubernetes.NewKubernetes()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	info, err := k.GetInfo()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	fmt.Println(info)
+// }
+
 func main() {
 	AzureEnqueue()
+	// KubernetesAPI()
 }
