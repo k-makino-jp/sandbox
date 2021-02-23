@@ -3,6 +3,6 @@ package downwardapi
 
 // PodInfo Pod情報
 type PodInfo struct {
-	PodName   string `json:"pod_name"`
-	Namespace string `json:"namespace"`
+	PodName   string
+	Namespace string
 }
