@@ -3,7 +3,6 @@
 package kubernetes
 
 import (
-	"context"
 	"errors"
 	"gosample/pkg/downwardapi"
 	"gosample/pkg/kubernetes/mock_kubernetes"
@@ -12,10 +11,15 @@ import (
 
 	"github.com/golang/mock/gomock"
 	corev1 "k8s.io/api/core/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	k8s "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/fake"
+	fakecorev1 "k8s.io/client-go/kubernetes/typed/core/v1/fake"
 	"k8s.io/client-go/rest"
+	k8stesting "k8s.io/client-go/testing"
 )
 
 func Test_kubernetes_Init(t *testing.T) {
@@ -102,20 +106,49 @@ func Test_kubernetes_GetInfo(t *testing.T) {
 	}
 }
 
+// functions
+// newFakeClient := func() *fake.Clientset {
+// 	client := fake.NewSimpleClientset()
+// 	pod := &corev1.Pod{
+// 		ObjectMeta: metav1.ObjectMeta{Namespace: corev1.NamespaceDefault, Name: "podname"},
+// 	}
+// 	client.CoreV1().Pods(corev1.NamespaceDefault).Create(context.TODO(), pod, metav1.CreateOptions{})
+// pod = &corev1.Pod{
+// 	ObjectMeta: metav1.ObjectMeta{Namespace: "kube-system", Name: "podname"},
+// }
+// 	client.CoreV1().Pods("kube-system").Create(context.TODO(), pod, metav1.CreateOptions{})
+// 	return client
+// }
+
+// reactionFunc := func(action k8stesting.Action) (handled bool, ret runtime.Object, err error) {
+// 	fmt.Println("ACTION")
+// 	switch {
+// 	case action.Matches("get", "pods"):
+// 		fmt.Println("ACTION")
+// 		groupResource := schema.GroupResource{
+// 			Group:    "",
+// 			Resource: "",
+// 		}
+// 		return false, nil, k8serrors.NewForbidden(groupResource, "forbidden", errForbidden)
+// 	}
+// 	return true, pod, nil
+// }
+// fakeClient.AddReactor("get", "pods", reactionFunc)
+
+func newFakeClient(verb, resourceName string, resource runtime.Object, err error) *fake.Clientset {
+	clientset := fake.NewSimpleClientset()
+	clientset.CoreV1().(*fakecorev1.FakeCoreV1).
+		PrependReactor(verb, resourceName, func(action k8stesting.Action) (bool, runtime.Object, error) {
+			return true, resource, err
+		})
+	return clientset
+}
+
 func Test_kubernetes_getPods(t *testing.T) {
-	// functions
-	newFakeClient := func() *fake.Clientset {
-		client := fake.NewSimpleClientset()
-		pod := &corev1.Pod{
-			ObjectMeta: metav1.ObjectMeta{Namespace: corev1.NamespaceDefault, Name: "podname"},
-		}
-		client.CoreV1().Pods(corev1.NamespaceDefault).Create(context.TODO(), pod, metav1.CreateOptions{})
-		pod = &corev1.Pod{
-			ObjectMeta: metav1.ObjectMeta{Namespace: "kube-system", Name: "podname"},
-		}
-		client.CoreV1().Pods("kube-system").Create(context.TODO(), pod, metav1.CreateOptions{})
-		return client
-	}
+	// variables
+	errForbidden := k8serrors.NewForbidden(schema.GroupResource{}, "Error", errors.New("Forbidden error occurred"))
+	// configure fake client
+	pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Namespace: "kube-system", Name: "podname"}}
 	// test
 	tests := []struct {
 		name    string
@@ -125,10 +158,18 @@ func Test_kubernetes_getPods(t *testing.T) {
 		{
 			name: "kubernetes.getPods Pod情報を取得するとき Pod情報が取得されること",
 			k: &kubernetes{
-				clientset: newFakeClient(),
+				clientset: newFakeClient("get", "pods", pod, nil),
 				podInfo:   downwardapi.PodInfo{PodName: "podname", Namespace: corev1.NamespaceDefault},
 			},
 			wantErr: nil,
+		},
+		{
+			name: "kubernetes.getPods 403Forbiddenが発生するとき Errorが返ること",
+			k: &kubernetes{
+				clientset: newFakeClient("get", "pods", pod, errForbidden),
+				podInfo:   downwardapi.PodInfo{PodName: "podname", Namespace: corev1.NamespaceDefault},
+			},
+			wantErr: errForbidden,
 		},
 		// {
 		// 	name: "kubernetes.getPods 403Forbiddenが発生するとき Errorが返ること",

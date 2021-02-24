@@ -81,8 +81,9 @@ func (a azure) Enqueue(message Message) (int, error) {
 	enqueueMessageResponse, err := a.messagesURLEnqueue.Enqueue(
 		ctx,
 		messageText,
-		visibilityTimeout, // 可視性タイムアウト
-		timeToLive,        // メッセージの有効期限
+		visibilityTimeout, // 可視性タイムアウト(dequeue操作から見えない時間を指す)
+		// https://docs.microsoft.com/ja-jp/rest/api/storageservices/put-message
+		timeToLive, // メッセージの有効期限(デフォルトは7日間。最大も7日間。)
 	)
 	statusCode := a.enqueueMessageResponse.StatusCode(enqueueMessageResponse)
 	if err != nil {
