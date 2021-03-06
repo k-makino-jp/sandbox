@@ -1,0 +1,10 @@
+# release-cli Docker image must be specified.
+
+release-job:
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  script:
+  - echo 'release job'
+  release:
+    tag_name: $CI_COMMIT_TAG
+    ref: echo $CI_COMMIT_TAG | grep 'v\d'
+    description: 'release-job'
