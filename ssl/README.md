@@ -92,5 +92,7 @@ $ mkcert -install
 ## 自己署名証明書を作成する
 
 ~~~
-$ mkcert localhost
+$ mkcert localhost \
+-key-file  server_key.pem \
+-cert-file server_crt.pem
 ~~~
