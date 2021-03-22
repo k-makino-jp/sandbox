@@ -2,6 +2,12 @@
 
 ## 自己署名認証局を構築する
 
+* 作業ディレクトリを作成する
+
+~~~
+$ mkdir -p /etc/pki/CA/private
+~~~
+
 * 自己署名認証局の秘密鍵を作成する
 
 ~~~
@@ -51,8 +57,8 @@ $ openssl req -new \
 * サーバー証明書を作成する
 
 ~~~
-$ openssl ca -days 365 \
--in domain_name.csr \
+$ openssl ca -days 365 -policy policy_anything \
+-in  /etc/pki/tls/certs/domain_name.csr \
 -out /etc/pki/tls/certs/domain_name.crt.pem
 ~~~
 

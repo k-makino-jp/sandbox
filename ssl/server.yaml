@@ -17,3 +17,18 @@ spec:
     image: curlimages/curl:7.75.0
     name: curl
   restartPolicy: Never
+---
+# kubectl exec -ti ssl -- /bin/sh
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ssl
+spec:
+  containers:
+  - args:
+    - /bin/sh
+    - -c
+    - sleep 3600
+    image: centos:7
+    name: curl
+  restartPolicy: Never
