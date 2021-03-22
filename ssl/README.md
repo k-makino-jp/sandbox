@@ -69,3 +69,28 @@ $ openssl rsa \
 -in /etc/pki/tls/private/privkey.pem \
 -out /etc/pki/tls/private/privkey-nopass.pem
 ~~~
+
+
+# mkcertを利用した自己署名証明書を作成する
+
+## 参考
+
+* [mkcert](https://github.com/FiloSottile/mkcert)
+
+## mkcertをインストールする
+
+~~~
+$ yum install nss-tools
+~~~
+
+## 自己署名認証局を構築する
+
+~~~
+$ mkcert -install
+~~~
+
+## 自己署名証明書を作成する
+
+~~~
+$ mkcert localhost
+~~~
