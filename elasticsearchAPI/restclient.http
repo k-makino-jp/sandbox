@@ -80,3 +80,16 @@ Content-Type: application/json
 
 curl --request GET --url http://localhost:9200/library/_search --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"query": {"match": {"title": "INFO:"}}}'
 
+### Analyze
+
+GET http://localhost:9200/library/_analyze
+Content-Type: application/json
+
+{
+  "tokenizer": "standard",
+  "text": "INFO: HOGE INFO:FUGA"
+}
+
+### Analyze With Curl
+
+curl --request GET --url http://localhost:9200/library/_analyze --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"tokenizer": "standard","text": "INFO: HOGE INFO:FUGA"}'
