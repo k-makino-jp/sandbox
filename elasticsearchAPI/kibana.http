@@ -1,0 +1,30 @@
+### Create Document
+PUT http://localhost:9200/library/_doc/1
+Content-Type: application/json
+
+{
+  "title": "Norwegian Wood",
+  "name": {
+    "first": "Haruki",
+    "last": "Murakami"
+  },
+  "publish_date": "1987-09-04T00:00:00+0900",
+  "price": 19.95
+}
+
+### Create Document With Curl
+curl --request PUT --url http://localhost:9200/library/_doc/1 --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"title": "Norwegian Wood","name": {"first": "Haruki","last": "Murakami"},"publish_date": "1987-09-04T00:00:00+0900","price": 19.95}'
+
+### Analyze Tokenizer Letter
+GET http://localhost:9200/library/_analyze
+Content-Type: application/json
+
+{
+  "tokenizer": "letter",
+  "text": "2021/01/01T12:34:56Z:SOFTWARE:ERROR:00000:resident"
+}
+
+### Analyze Tokenizer Letter With Curl
+
+curl --request GET --url http://localhost:9200/library/_analyze --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"tokenizer": "letter","text": "2021/01/01T12:34:56Z:SOFTWARE:ERROR:00000:resident"}'
+

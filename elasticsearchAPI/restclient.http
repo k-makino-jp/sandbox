@@ -93,3 +93,31 @@ Content-Type: application/json
 ### Analyze With Curl
 
 curl --request GET --url http://localhost:9200/library/_analyze --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"tokenizer": "standard","text": "INFO: HOGE INFO:FUGA"}'
+
+### Analyze Tokenizer Standard
+
+GET http://localhost:9200/library/_analyze
+Content-Type: application/json
+
+{
+  "tokenizer": "standard",
+  "text": "2021/01/01T12:34:56Z:SOFTWARE:ERROR:00000:resident"
+}
+
+### Analyze Tokenizer Standard With Curl
+
+curl --request GET --url http://localhost:9200/library/_analyze --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"tokenizer": "standard","text": "2021/01/01T12:34:56Z:SOFTWARE:ERROR:00000:resident"}'
+
+### Analyze Tokenizer Standard
+
+GET http://localhost:9200/library/_analyze
+Content-Type: application/json
+
+{
+  "tokenizer": "letter",
+  "text": "2021/01/01T12:34:56Z:SOFTWARE:ERROR:00000:resident"
+}
+
+### Analyze Tokenizer Standard With Curl
+
+curl --request GET --url http://localhost:9200/library/_analyze --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"tokenizer": "letter","text": "2021/01/01T12:34:56Z:SOFTWARE:ERROR:00000:resident"}'
