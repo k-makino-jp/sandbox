@@ -28,3 +28,38 @@ Content-Type: application/json
 
 curl --request GET --url http://localhost:9200/library/_analyze --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"tokenizer": "letter","text": "2021/01/01T12:34:56Z:SOFTWARE:ERROR:00000:resident"}'
 
+### Create Document
+
+PUT http://localhost:9200/library/_doc/2
+Content-Type: application/json
+
+{
+  "title": "2021/01/01T12:34:56Z:SOFTWARE:ERROR:00000:resident",
+  "name": {
+    "first": "Foo",
+    "last": "Bar"
+  },
+  "publish_date": "1987-09-04T00:00:00+0900",
+  "price": 19.95
+}
+
+### Create Document 3 With Curl
+
+curl --request PUT --url http://localhost:9200/library/_doc/2 --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"title": "2021/01/01T12:34:56Z:SOFTWARE:ERROR:00000:resident","name": {"first": "Foo","last": "Bar"},"publish_date": "1987-09-04T00:00:00+0900","price": 19.95}'
+
+### Search Document With Specified Word
+
+GET http://localhost:9200/library/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "match_phrase": {
+      "title": "SOFTWARE ERROR"
+    }
+  }
+}
+
+### Search Document With Specified Word Using Curl
+
+curl --request GET --url http://localhost:9200/library/_search --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"query": {"match": {"title": "ERROR"}}}'
