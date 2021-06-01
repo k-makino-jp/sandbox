@@ -1,0 +1,102 @@
+##################################################
+### Create Document: INFO message
+##################################################
+PUT http://localhost:9200/app-000001/_doc/1
+Content-Type: application/json
+
+{
+  "namespace_name": "test-software-dev",
+  "message": "2021-01-01T12:34:56Z:SOFTWARE:INFO:10000:this is message",
+}
+
+### Create Document With Curl
+curl --request PUT --url http://localhost:9200/app-000001/_doc/1 --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"namespace_name": "test-software-dev","message": "2021-01-01T12:34:56Z:SOFTWARE:INFO:10000:this is message",}'
+
+##################################################
+### Create Document: ERROR message
+##################################################
+PUT http://localhost:9200/app-000001/_doc/2
+Content-Type: application/json
+
+{
+  "namespace_name": "test-software-dev",
+  "message": "2021-01-01T12:34:56Z:SOFTWARE:ERROR:20000:this is message",
+}
+
+### Create Document With Curl
+curl --request PUT --url http://localhost:9200/app-000001/_doc/2 --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"namespace_name": "test-software-dev","message": "2021-01-01T12:34:56Z:SOFTWARE:ERROR:20000:this is message",}'
+
+##################################################
+### Search All Document
+##################################################
+GET http://localhost:9200/app-000001/_search?size=10
+
+### Search Document With Curl
+
+curl --request GET --url http://localhost:9200/app-000001/_search --header 'user-agent: vscode-restclient'
+
+##################################################
+### Search Document With Specified Word
+##################################################
+GET http://localhost:9200/app-000001/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "match": {
+      "message": "INFO:"
+    }
+  }
+}
+
+### Search Document With Specified Word Using Curl
+
+curl --request GET --url http://localhost:9200/app-000001/_search --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"query": {"match": {"message": "INFO:"}}}'
+
+##################################################
+### Search Document With Specified Words
+##################################################
+GET http://localhost:9200/app-000001/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "match_phrase": {
+      "message": "SOFTWARE:INFO:"
+    }
+  }
+}
+
+### Search Document With Specified Words using Curl
+curl --request GET --url http://localhost:9200/app-000001/_search --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"query": {"match_phrase": {"message": "SOFTWARE:INFO:"}}}'
+
+##################################################
+### Analyze: tokenizer: standard
+##################################################
+GET http://localhost:9200/app-000001/_analyze
+Content-Type: application/json
+
+{
+  "tokenizer": "standard",
+  "text": "2021/01/01T12:34:56Z:SOFTWARE:ERROR:00000:resident"
+}
+
+### Analyze Tokenizer Standard With Curl
+
+curl --request GET --url http://localhost:9200/app-000001/_analyze --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"tokenizer": "standard","text": "2021/01/01T12:34:56Z:SOFTWARE:ERROR:00000:resident"}'
+
+##################################################
+### Analyze: tokenizer: letter
+##################################################
+
+GET http://localhost:9200/app-000001/_analyze
+Content-Type: application/json
+
+{
+  "tokenizer": "letter",
+  "text": "2021/01/01T12:34:56Z:SOFTWARE:ERROR:00000:resident"
+}
+
+### Analyze Tokenizer Standard With Curl
+
+curl --request GET --url http://localhost:9200/app-000001/_analyze --header 'content-type: application/json' --header 'user-agent: vscode-restclient' --data '{"tokenizer": "letter","text": "2021/01/01T12:34:56Z:SOFTWARE:ERROR:00000:resident"}'
