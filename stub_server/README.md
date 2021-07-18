@@ -27,9 +27,62 @@ docker-compose up -d
 http://localhost:8065
 ~~~
 
-# Incoming Webhooks
+# Webhooks
 
-## Configuration
+## Configure Incoming and Outgoing Webhooks with mmctl
+
+* login to docker container
+
+~~~
+docker exec -ti mattermost-preview /bin/sh
+~~~
+
+* login
+
+~~~
+mmctl auth login http://localhost:8065/ --name local-server --username mmadmin --password mm123admin
+~~~
+
+* create channel
+
+~~~
+mmctl channel create --team devops --name chat-ops --display_name "ChatOps"
+~~~
+
+* get channel id
+
+~~~
+mmctl channel search chat-ops | grep "Channel ID :"
+~~~
+
+* create incoming-webhook
+
+~~~
+mmctl webhook create-incoming \
+--channel "<ChannelID>" \
+--user "mmadmin" \
+--display-name "ChatOps IncomingWebhook" \
+--description "Stub Server"
+~~~
+
+* create outgoing-webhook
+
+~~~
+mmctl webhook create-outgoing \
+--team devops \
+--channel "<ChannelID>" \
+--user mmadmin \
+--display-name "ChatOps OutgoingWebhook" \
+--description "Stub Server" \
+--trigger-word "#build" \
+--trigger-word "#test" \
+--url <URL> \
+--content-type "application/json"
+~~~
+
+## Incoming Webhooks
+
+### Configuration
 
 * `[Integrations] > [Incoming Webhooks] > [Add Incoming Webhook]`
 * Please configure below key-value.
@@ -38,7 +91,7 @@ http://localhost:8065
   * Channel: Town Square
   * Lock to this channel: yes
 
-## Tesing
+### Tesing
 
 * Please execute below command.
 
@@ -53,9 +106,9 @@ Hello, this is some text
 This is more text. :tada:
 ~~~
 
-# Outgoing Webhooks
+## Outgoing Webhooks
 
-## Configuration
+### Configuration
 
 * `[Integrations] > [Outgoing Webhooks] > [Add Outgoing Webhook]`
 * Please configure below key-value.
@@ -70,7 +123,7 @@ This is more text. :tada:
 * Please configure below key-value.
   * Allow untrusted internal connections to: localhost
 
-## Tesing
+### Tesing
 
 * Please submit below message at Town Square.
 
@@ -88,5 +141,6 @@ This is more text. :tada:
 
 ~~~
 docker-compose down
+rm -rf mattermost-data mysql
 ~~~
 
