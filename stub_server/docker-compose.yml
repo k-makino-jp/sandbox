@@ -8,3 +8,4 @@ services:
     volumes:
       - ./mattermost-data:/mm/mattermost/mattermost-data
       - ./mysql:/var/lib/mysql
+      - ./script:/opt/stub_server/script
