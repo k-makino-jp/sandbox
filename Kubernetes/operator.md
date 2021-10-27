@@ -1,6 +1,8 @@
 # Kubernetes Operator
 
 ## Reference
+* API Reference
+  * [CustomResourceDefinition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#customresourcedefinition-v1-apiextensions-k8s-io)
 * Webサイト
   * [Kubernetes Operator とは redhat.com](https://www.redhat.com/ja/topics/containers/what-is-a-kubernetes-operator)
 * 書籍
