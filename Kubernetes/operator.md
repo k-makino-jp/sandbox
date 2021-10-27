@@ -1,7 +1,6 @@
 # Kubernetes Operator
 
 ## Reference
-<<<<<<< HEAD
 * Webサイト
   * [Kubernetes Operator とは redhat.com](https://www.redhat.com/ja/topics/containers/what-is-a-kubernetes-operator)
 * 書籍
@@ -25,15 +24,6 @@ Kubernetes Operator はカスタムリソースを使用する Kubernetes への
 
 ## カスタムリソース とは
 カスタムリソースの説明の前にリソースを説明する。
-=======
-* [Kubernetes Operator とは redhat.com](https://www.redhat.com/ja/topics/containers/what-is-a-kubernetes-operator)
-
-## Kubernetes Operator とは
-Operator (カスタムコントローラー) はカスタムリソースを使用する Kubernetes へのソフトウェア拡張であり、
-複雑なステートフルアプリケーションのインスタンス作成、スケーリング、属性変更等を行うコントローラーである。
-
-## カスタムリソースとは
->>>>>>> f0e9118b86eeacb2c89eb6aeefc11c1a7f842335
 リソースは、Kubernetes API のエンドポイントで、特定の API オブジェクトのコレクションを保持する。
 例えば、Pod の Kubernetes API はリソースであり、この API は、インスタンス作成 (create)、属性変更 (apply)、状態取得 (get)、削除 (delete)などのコレクションを含有している。
 
@@ -64,11 +54,7 @@ Kubernetes にはないドメイン固有の知識を追加する必要がある
 
 **Kubernetes Operator はこの固有のドメイン知識を
 Kubernetes 拡張として導入し、
-<<<<<<< HEAD
 アプリケーションのライフサイクルを管理して自動化**する。
-=======
-アプリケーションのライフサイクルを管理して自動化する。
->>>>>>> f0e9118b86eeacb2c89eb6aeefc11c1a7f842335
 
 ## カスタムリソースを追加する
 Kubernetes は独自のリソース (カスタムリソース) を容易に追加して、Kubernetes を拡張できるように作られている。
