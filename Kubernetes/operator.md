@@ -72,7 +72,7 @@ CRDオブジェクトを定義することで、指定した名前、スキー�
 
 ## Kubernetes Operator を利用する
 
-### [etcd-operator]((https://github.com/coreos/etcd-operator)) を利用する例
+### [etcd-operator](https://github.com/coreos/etcd-operator) を利用する例
 
 1. Kubernetes を利用可能な環境に移動する。
 2. etcd-operator-workspace ディレクトリを作成し、カレントディレクトリを移動する。
