@@ -1,0 +1,47 @@
+<DescribeInstancesResponse xmlns="https://computing.api.nifcloud.com/api/">
+  <requestId>request0-0000-0000-0000-000000000001</requestId> <!-- required -->
+  <reservationSet>
+    <!-- start of reservationSet1 definition -->
+    <item>
+      <instancesSet>
+        <item>
+          <instanceId>server01</instanceId> <!-- required -->
+          <instanceUniqueId>vmid-00001</instanceUniqueId> <!-- required -->
+          <instanceState>
+            <code>16</code> <!-- required -->
+            <name>running</name> <!-- required -->
+          </instanceState>
+          <privateDnsName>10.0.0.1</privateDnsName>
+          <dnsName>200.0.0.1</dnsName>
+          <instanceType>small4</instanceType> <!-- required -->
+          <placement>
+            <availabilityZone>east-11</availabilityZone> <!-- required -->
+          </placement>
+          <privateIpAddress>10.0.0.1</privateIpAddress>
+          <ipAddress>200.0.0.1</ipAddress>
+          <ipType>static</ipType>
+          <niftyPrivateIpType>elastic</niftyPrivateIpType>
+          <networkInterfaceSet>
+            <item>
+              <niftyNetworkId>net-COMMON_GLOBAL</niftyNetworkId>
+              <status>available</status>
+              <macAddress>00:00:00:00:00:01</macAddress>
+              <association>
+                <publicIp>200.0.0.1</publicIp>
+              </association>
+              <privateIpAddressesSet />
+              <multiIpAddressesSet />
+            </item>
+            <item>
+              <niftyNetworkId>net-COMMON_PRIVATE</niftyNetworkId>
+              <status>in-use</status>
+              <macAddress>00:00:00:00:00:02</macAddress>
+              <privateIpAddress>10.0.0.1</privateIpAddress>
+            </item>
+          </networkInterfaceSet>
+        </item>
+      </instancesSet>
+    </item>
+    <!-- end of reservationSet1 definition -->
+  </reservationSet>
+</DescribeInstancesResponse>

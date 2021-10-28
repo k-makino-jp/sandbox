@@ -1,0 +1,141 @@
+<DescribeInstancesResponse xmlns="https://computing.api.nifcloud.com/api/">
+  <requestId>request0-0000-0000-0000-000000000001</requestId> <!-- required -->
+  <reservationSet>
+    <!-- start of reservationSet1 definition -->
+    <item>
+      <reservationId />
+      <ownerId />
+      <groupSet>
+        <item>
+          <groupId>fw0001</groupId>
+        </item>
+      </groupSet>
+      <instancesSet>
+        <item>
+          <instanceId>server01</instanceId> <!-- required -->
+          <instanceUniqueId>vmid-00001</instanceUniqueId> <!-- required -->
+          <imageId>1</imageId>
+          <instanceState>
+            <code>16</code> <!-- required -->
+            <name>running</name> <!-- required -->
+          </instanceState>
+          <privateDnsName>10.0.0.1</privateDnsName>
+          <dnsName>200.0.0.1</dnsName>
+          <reason />
+          <keyName>sshkey01</keyName>
+          <amiLaunchIndex />
+          <productCodes>
+            <item>
+              <productCode />
+            </item>
+          </productCodes>
+          <instanceType>small4</instanceType> <!-- required -->
+          <launchTime>2020-12-31T15:00:00.000+09:00</launchTime>
+          <placement>
+            <availabilityZone>east-11</availabilityZone> <!-- required -->
+          </placement>
+          <kernelId />
+          <ramdiskId />
+          <platform>centos</platform>
+          <imageName>CentOS6.3 64bit server</imageName>
+          <monitoring>
+            <state>disabled</state>
+          </monitoring>
+          <subnetId />
+          <vpcId />
+          <privateIpAddress>10.0.0.1</privateIpAddress>
+          <ipAddress>200.0.0.1</ipAddress>
+          <privateIpAddressV6 />
+          <ipAddressV6 />
+          <stateReason>
+            <code />
+            <message />
+          </stateReason>
+          <architecture>i386</architecture>
+          <rootDeviceType>disk</rootDeviceType>
+          <rootDeviceName />
+          <blockDeviceMapping />
+          <instanceLifecycle />
+          <spotInstanceRequestId />
+          <accountingType>2</accountingType>
+          <nextMonthAccountingType>1</nextMonthAccountingType>
+          <loadbalancing>
+            <item>
+              <loadBalancerName>lb0001</loadBalancerName>
+              <loadBalancerPort>80</loadBalancerPort>
+              <instancePort>80</instancePort>
+              <State>InService</State>
+            </item>
+          </loadbalancing>
+          <autoscaling>
+            <autoScalingGroupName>autoscale01</autoScalingGroupName>
+            <expireTime>2020-12-31T16:00:00.000+09:00</expireTime>
+          </autoscaling>
+          <ipType>static</ipType>
+          <niftyPrivateIpType>elastic</niftyPrivateIpType>
+          <description />
+          <hotAdd>0</hotAdd>
+          <niftyPrivateNetworkType>STANDARD</niftyPrivateNetworkType>
+          <tenancy>default</tenancy>
+          <networkInterfaceSet>
+            <item>
+              <subnetId />
+              <vpcId />
+              <description />
+              <ownerId />
+              <niftyNetworkId>net-COMMON_GLOBAL</niftyNetworkId>
+              <status>available</status>
+              <macAddress>00:00:00:00:00:01</macAddress>
+              <privateDnsName />
+              <sourceDestCheck />
+              <groupSet />
+              <attachment>
+                <deviceIndex>0</deviceIndex>
+                <status>attached</status>
+                <deleteOnTermination>true</deleteOnTermination>
+              </attachment>
+              <association>
+                <publicIp>200.0.0.1</publicIp>
+                <publicIpV6 />
+                <publicDnsName />
+                <ipOwnerId />
+              </association>
+              <privateIpAddressesSet />
+              <multiIpAddressesSet />
+            </item>
+            <item>
+              <subnetId />
+              <vpcId />
+              <description />
+              <ownerId />
+              <niftyNetworkId>net-COMMON_PRIVATE</niftyNetworkId>
+              <status>in-use</status>
+              <macAddress>00:00:00:00:00:02</macAddress>
+              <privateIpAddress>10.0.0.1</privateIpAddress>
+              <privateIpAddressV6 />
+              <privateDnsName />
+              <sourceDestCheck />
+              <groupSet />
+              <attachment>
+                <deviceIndex>0</deviceIndex>
+                <status>attaching</status>
+                <deleteOnTermination>true</deleteOnTermination>
+              </attachment>
+              <privateIpAddressesSet />
+              <multiIpAddressesSet />
+            </item>
+          </networkInterfaceSet>
+          <vmTools>
+            <state>running</state>
+            <version>11.0.5</version>
+          </vmTools>
+          <niftyElasticLoadBalancing />
+          <instanceBackupRule />
+          <isoImageSet />
+          <multiIpAddressGroup />
+        </item>
+      </instancesSet>
+    </item>
+    <!-- end of reservationSet1 definition -->
+  </reservationSet>
+</DescribeInstancesResponse>
