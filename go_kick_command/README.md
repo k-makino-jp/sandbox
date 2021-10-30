@@ -1,5 +1,9 @@
-```
-docker run --name busybox -d busybox sleep 3600 
+How to execute main_test.go
 
-docker exec busybox ls -l -a
+```bash
+# create busybox container
+$ docker run --name busybox -d busybox sleep 3600 
+
+# run main_test.go
+$ go test main_test.go
 ```
