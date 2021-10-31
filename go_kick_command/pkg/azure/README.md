@@ -15,6 +15,16 @@ $ git clone https://github.com/FiloSottile/mkcert && cd mkcert
 $ go build -ldflags "-X main.Version=$(git describe --tags)"
 $ ./mkcert -install
 $ ./mkcert 127.0.0.1
+=> 127.0.0.1.pem and 127.0.0.1-key.pem created.
+```
+
+### Docker Compose 実行
+
+```
+$ mkdir azurite
+$ mv 127.0.0.1.pem azurite/127.0.0.1.pem
+$ mv 127.0.0.1-key.pem azurite/127.0.0.1-key.pem
+$ docker-compose up -d
 ```
 
 
