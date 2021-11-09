@@ -78,7 +78,7 @@ CRDオブジェクトを定義することで、指定した名前、スキー�
 
 ### [etcd-operator](https://github.com/coreos/etcd-operator) を利用する例
 
-1. Kubernetes を利用可能な環境に移動する。
+1. Kubernetes を利用可能な環境に移動する。(e.g. [Kubernetes Playground | Katacoda](https://www.katacoda.com/courses/kubernetes/playground))
 2. etcd-operator-workspace ディレクトリを作成し、カレントディレクトリを移動する。
    ```
    $ mkdir etcd-operator-workspace && cd etcd-operator-workspace
@@ -190,7 +190,50 @@ controlplane $ kubectl get crd etcdclusters.etcd.database.coreos.com -o yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
+  creationTimestamp: "2021-11-09T23:22:57Z"
+  generation: 1
+  managedFields:
+  - apiVersion: apiextensions.k8s.io/v1beta1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        f:conversion:
+          .: {}
+          f:strategy: {}
+        f:group: {}
+        f:names:
+          f:kind: {}
+          f:listKind: {}
+          f:plural: {}
+          f:shortNames: {}
+          f:singular: {}
+        f:preserveUnknownFields: {}
+        f:scope: {}
+        f:version: {}
+        f:versions: {}
+      f:status:
+        f:storedVersions: {}
+    manager: etcd-operator
+    operation: Update
+    time: "2021-11-09T23:22:57Z"
+  - apiVersion: apiextensions.k8s.io/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        f:acceptedNames:
+          f:kind: {}
+          f:listKind: {}
+          f:plural: {}
+          f:shortNames: {}
+          f:singular: {}
+        f:conditions: {}
+    manager: kube-apiserver
+    operation: Update
+    time: "2021-11-09T23:22:57Z"
   name: etcdclusters.etcd.database.coreos.com
+  resourceVersion: "730"
+  selfLink: /apis/apiextensions.k8s.io/v1/customresourcedefinitions/etcdclusters.etcd.database.coreos.com
+  uid: 24792f09-2275-4705-a9b6-24b9a20ef391
 spec:
   conversion:
     strategy: None
@@ -208,6 +251,27 @@ spec:
   - name: v1beta2
     served: true
     storage: true
+status:
+  acceptedNames:
+    kind: EtcdCluster
+    listKind: EtcdClusterList
+    plural: etcdclusters
+    shortNames:
+    - etcd
+    singular: etcdcluster
+  conditions:
+  - lastTransitionTime: "2021-11-09T23:22:57Z"
+    message: no conflicts found
+    reason: NoConflicts
+    status: "True"
+    type: NamesAccepted
+  - lastTransitionTime: "2021-11-09T23:22:57Z"
+    message: the initial names have been accepted
+    reason: InitialNamesAccepted
+    status: "True"
+    type: Established
+  storedVersions:
+  - v1beta2
 
 controlplane $ vi etcd-cluster.yaml
 
