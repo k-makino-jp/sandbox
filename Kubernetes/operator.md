@@ -4,6 +4,8 @@
 * API Reference
   * [CustomResourceDefinition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#customresourcedefinition-v1-apiextensions-k8s-io)
 * Webサイト
+  * [オペレーターパターン | Kubernetes](https://kubernetes.io/ja/docs/concepts/extend-kubernetes/operator/)
+  * [カスタムリソース | Kubernetes](https://kubernetes.io/ja/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
   * [Kubernetes Operator とは redhat.com](https://www.redhat.com/ja/topics/containers/what-is-a-kubernetes-operator)
 * 書籍
   * [澤橋松王,大津浩司,青山真巳,河角修,鈴木洋一朗,関克隆 (2020) OpenShift徹底活用ガイド, 株式会社C&R研究所](https://www.c-r.com/book/detail/1362)
@@ -19,7 +21,7 @@ Kubernetes Operator はカスタムリソースを使用する Kubernetes への
 
 ||ステートレス型|ステートフル型|
 |:--|:--|:--|
-|アプリケーション例|Webサーバー / アプリケーションサーバー|DB / バッチサーバー|
+|アプリケーション例|Webサーバー / アプリケーションサーバー|DB|
 |状態の有無|無|有|
 |障害復旧の難度|易 (コンテナの再起動で復旧可能)|難 **(固有の運用ナレッジが必要)**|
 |障害復旧の方法|Deployment による自動復旧|**運用者が手順書を基にリカバリ**|
@@ -27,7 +29,7 @@ Kubernetes Operator はカスタムリソースを使用する Kubernetes への
 ## カスタムリソース とは
 カスタムリソースの説明の前にリソースを説明する。
 リソースは、Kubernetes API のエンドポイントで、特定の API オブジェクトのコレクションを保持する。
-例えば、Pod の Kubernetes API はリソースであり、この API は、インスタンス作成 (create)、属性変更 (apply)、状態取得 (get)、削除 (delete)などのコレクションを含有している。
+例えば、Pod の Kubernetes API はリソースであり、この API は、インスタンス作成 (create)、属性変更 (edit)、状態取得 (get)、削除 (delete)などのコレクションを含有している。
 
 カスタムリソースは、Kubernetes API の拡張で、
 **Kubernetes 本体のコードを変更せずに、独自のリソースを容易に追加するための機能**である。
@@ -38,7 +40,7 @@ Kubernetes Operator はカスタムリソースを使用する Kubernetes への
 ## カスタムコントローラー とは
 カスタムリソースは、単純に構造化データを格納、取り出す機能を提供する。カスタムリソースをカスタムコントローラーと組み合わせることで、インスタンス作成、属性変更、状態取得等が可能となり、カスタムリソースは真の[宣言的 API](https://kubernetes.io/ja/docs/concepts/extend-kubernetes/api-extension/custom-resources/#%E5%AE%A3%E8%A8%80%E7%9A%84api) を提供する。
 
-宣言的 API は、リソースのあるべき状態を宣言することを可能にし、Kubernetes オブジェクトの現在の状態を、あるべき状態に同期し続けるように動く。例えば、ユーザーが「コンテナは3つ起動されていること」という宣言を行えば、その宣言に従って Kubernetes が3つのコンテナを起動する。
+宣言的 API は、リソースのあるべき状態を宣言することを可能にし、Kubernetes オブジェクトの現在の状態を、あるべき状態に同期し続けるように動く([Reconciliation Loop; 制御ループ](https://kubernetes.io/ja/docs/concepts/architecture/controller/))。例えば、ユーザーが「コンテナは3つ起動されていること」という宣言を行えば、その宣言に従って Kubernetes が3つのコンテナを起動する。
 宣言的 API の対義語は 命令的 API と呼ばれる。これはアプリケーションに対し、具体的な処理内容を命令することで順次実行させることを指す。
 
 稼働しているクラスターのライフサイクルとは無関係に、カスタムコントローラーをデプロイ、更新することが可能である。
