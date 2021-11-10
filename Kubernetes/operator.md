@@ -305,7 +305,7 @@ example-etcd-cluster-9bj9cfth6t   1/1     Running   0          40s
 example-etcd-cluster-pxjxwr456m   1/1     Running   0          4m29s
 ```
 
-### OpenShift Logging を利用する例
+### Red Hat OpenShift Logging を利用する例
 [第3章 OpenShift Logging のインストール OpenShift Container Platform 4.8 | Red Hat Customer Portal](https://access.redhat.com/documentation/ja-jp/openshift_container_platform/4.8/html/logging/cluster-logging-deploying)を参照する。
 
 ## Red Hat OpenShift Container Platform で Operator を利用する
