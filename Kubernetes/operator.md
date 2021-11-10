@@ -171,9 +171,9 @@ etcd-operatorは上記の方法を把握している。
    $ kubectl apply -f etcd-cluster.yaml
    ```
 9.  etcd Pod の数を確認する。
-   ```
-   $ kubectl get pods -l app=etcd
-   ```
+    ```
+    $ kubectl get pods -l app=etcd
+    ```
 
 * NOTE:
   * [etcd-operator が CustomResourceDefinition を作成](https://github.com/coreos/etcd-operator/blob/13a1831f9744207b39733bbe91413ca2e389aa40/pkg/util/k8sutil/crd.go#L54)しているため、CustomResourceDefinition を手動で作成する必要はない。
