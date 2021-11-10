@@ -7,6 +7,8 @@
   * [オペレーターパターン | Kubernetes](https://kubernetes.io/ja/docs/concepts/extend-kubernetes/operator/)
   * [カスタムリソース | Kubernetes](https://kubernetes.io/ja/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
   * [Kubernetes Operator とは redhat.com](https://www.redhat.com/ja/topics/containers/what-is-a-kubernetes-operator)
+* ebook
+  * [O’Reilly: Kubernetes Operators: Automating the Container Orchestration Platform](https://www.redhat.com/ja/resources/oreilly-kubernetes-operators-automation-ebook)
 * 書籍
   * [澤橋松王,大津浩司,青山真巳,河角修,鈴木洋一朗,関克隆 (2020) OpenShift徹底活用ガイド, 株式会社C&R研究所](https://www.c-r.com/book/detail/1362)
   * [青山真也 (2020) Kubernetes 完全ガイド, 株式会社インプレス](https://book.impress.co.jp/books/1119101148)
@@ -308,4 +310,3 @@ example-etcd-cluster-pxjxwr456m   1/1     Running   0          4m29s
 
 ## Kubernetes Operator を自作する
 [第4章 Operator の開発 OpenShift Container Platform 4.8 | Red Hat Customer Portal](https://access.redhat.com/documentation/ja-jp/openshift_container_platform/4.8/html/operators/_developing-operators) を参照する。
-
