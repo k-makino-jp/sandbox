@@ -89,6 +89,7 @@ etcd-operatorは上記の方法を把握している。
 以下は、実際にetcd-operatorを利用してetcdクラスターのデプロイ・スケールアウトを実施する例である。
 
 1. Kubernetes を利用可能な環境に移動する。(e.g. [Kubernetes Playground | Katacoda](https://www.katacoda.com/courses/kubernetes/playground))
+    - 注意: Kubernetes Playgroundで社外秘情報を扱わないこと。
 2. etcd-operator-workspace ディレクトリを作成し、カレントディレクトリを移動する。
    ```
    $ mkdir etcd-operator-workspace && cd etcd-operator-workspace
@@ -167,7 +168,7 @@ etcd-operatorは上記の方法を把握している。
    ```
    $ kubectl apply -f etcd-cluster.yaml
    ```
-9. etcd Pod の数を確認する。
+9.  etcd Pod の数を確認する。
    ```
    $ kubectl get pods -l app=etcd
    ```
