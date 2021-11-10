@@ -78,6 +78,16 @@ CRDオブジェクトを定義することで、指定した名前、スキー�
 
 ### [etcd-operator](https://github.com/coreos/etcd-operator) を利用する例
 
+etcdは分散型Key-Valueストアであり、一種の軽量データベースである。
+etcd管理者は、次の方法を知っている必要がある。
+* エンドポイントの構成、作成等を実施し、新しいノードをetcdクラスターに参加させる。
+* etcdクラスターを永続ストレージに接続する。
+* etcdクラスターのデータと構成をバックアップする。
+* etcdクラスターを新しいetcdバージョンにアップグレードする。
+
+etcd-operatorは上記の方法を把握している。
+以下は、実際にetcd-operatorを利用してetcdクラスターのデプロイ・スケールアウトを実施する例である。
+
 1. Kubernetes を利用可能な環境に移動する。(e.g. [Kubernetes Playground | Katacoda](https://www.katacoda.com/courses/kubernetes/playground))
 2. etcd-operator-workspace ディレクトリを作成し、カレントディレクトリを移動する。
    ```
