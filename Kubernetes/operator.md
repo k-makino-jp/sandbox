@@ -88,6 +88,8 @@ CRDオブジェクトを定義することで、指定した名前、スキー�
 このコントローラーは通常のコンテナアプリケーションを動かすのと同じように、コントロールプレーン外で動作する。
 例えば、コントローラーをDeploymentとしてクラスター内で動かすことができる。
 
+<img src="./images/deploy-operator.drawio.svg">
+
 ## Kubernetes Operator を利用する
 
 ### [etcd-operator](https://github.com/coreos/etcd-operator) を利用する例
