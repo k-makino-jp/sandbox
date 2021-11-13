@@ -78,6 +78,8 @@ Kubernetes は独自のリソース (カスタムリソース) を容易に追�
 カスタムリソース定義 (CustomrResourceDefinition; CRD) API リソースは、カスタムリソースを定義する。
 CRDオブジェクトを定義することで、指定した名前、スキーマで新しいカスタムリソースが作成される。
 
+<img src="./images/custom-resource-definition.drawio.svg">
+
 カスタムリソースの追加は CRD を使用する以外に API アグリゲーションを使用することもできる。
 カスタムリソースの追加方法の選択は[公式ドキュメント](https://kubernetes.io/ja/docs/concepts/extend-kubernetes/api-extension/custom-resources/#%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%A0%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9%E3%81%AE%E8%BF%BD%E5%8A%A0%E6%96%B9%E6%B3%95%E3%82%92%E9%81%B8%E6%8A%9E%E3%81%99%E3%82%8B)を参照する。
 
