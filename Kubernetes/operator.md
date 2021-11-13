@@ -17,7 +17,7 @@
 Kubernetes Operator はカスタムリソースを使用する Kubernetes へのソフトウェア拡張 (カスタムコントローラー) であり、
 **ステートフルアプリケーションを自動的に運用** (インスタンス作成、スケーリング、属性変更、etc) するための機能である。
 
-![Kubernetes Operator Overview](./images/operator.drawio.svg)
+<img src="./images/operator.drawio.svg">
 
 ## ステートレスとステートフルの違い
 アプリケーションはステートレス型とステートフル型に分類できる。
