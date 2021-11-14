@@ -48,7 +48,7 @@ Kubernetes Operator はカスタムリソースを使用する Kubernetes への
 ## カスタムコントローラー とは
 カスタムリソースは、単純に構造化データを格納、取り出す機能を提供する。カスタムリソースをカスタムコントローラーと組み合わせることで、インスタンス作成、属性変更、状態取得等が可能となり、カスタムリソースは真の[宣言的 API](https://kubernetes.io/ja/docs/concepts/extend-kubernetes/api-extension/custom-resources/#%E5%AE%A3%E8%A8%80%E7%9A%84api) を提供する。
 
-宣言的 API は、リソースのあるべき状態を宣言することを可能にし、Kubernetes オブジェクトの現在の状態を、あるべき状態に同期し続けるように動く([Reconciliation Loop; 制御ループ](https://kubernetes.io/ja/docs/concepts/architecture/controller/))。例えば、ユーザーが「コンテナは3つ起動されていること」という宣言を行えば、その宣言に従って Kubernetes が3つのコンテナを起動する。
+宣言的 API は、リソースのあるべき状態 (Desired State) を宣言することを可能にし、Kubernetes オブジェクトの現在の状態  (Current State) を、あるべき状態に同期し続けるように動く([Reconciliation Loop; 制御ループ](https://kubernetes.io/ja/docs/concepts/architecture/controller/))。例えば、ユーザーが「コンテナは3つ起動されていること」という宣言を行えば、その宣言に従って Kubernetes が3つのコンテナを起動する。
 宣言的 API の対義語は 命令的 API と呼ばれる。これはアプリケーションに対し、具体的な処理内容を命令することで順次実行させることを指す。
 
 <img src="./images/custom-controller.drawio.svg">
