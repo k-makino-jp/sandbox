@@ -48,9 +48,9 @@ Kubernetes Operator はカスタムリソースを使用する Kubernetes への
 ## カスタムコントローラー とは
 カスタムリソースは、単純に構造化データを格納、取り出す機能を提供する。カスタムリソースをカスタムコントローラーと組み合わせることで、インスタンス作成、属性変更、状態取得等が可能となり、カスタムリソースは真の[宣言的 API](https://kubernetes.io/ja/docs/concepts/extend-kubernetes/api-extension/custom-resources/#%E5%AE%A3%E8%A8%80%E7%9A%84api) を提供する。
 
-宣言的 API は、リソースのあるべき状態 (Desired State) を宣言することを可能にし、Kubernetes オブジェクトの現在の状態 (Current State) を、あるべき状態に同期し続けるように動く([Reconciliation Loop; 制御ループ または 調停ループ](https://kubernetes.io/ja/docs/concepts/architecture/controller/))。例えば、ユーザーが「コンテナは3つ起動されていること」という宣言を行えば、その宣言に従って Kubernetes が3つのコンテナを起動する。
+宣言的 API は、リソースのあるべき状態 (Desired State) を宣言することを可能にし、Kubernetes オブジェクトの現在の状態 (Current State) を、あるべき状態に同期し続けるように動く([Reconciliation Loop; 制御ループ または 調停ループ](https://kubernetes.io/ja/docs/concepts/architecture/controller/))。例えば、ユーザーが「コンテナは2つ起動されていること」という宣言を行えば、その宣言に従って Kubernetes が2つのコンテナを起動する。この仕組みはKubernetes標準のコントローラー (e.g. Deployment Controller、ReplicaSet Controller) でも利用されている。
 
-<img src="./images/custom-controller.drawio.svg">
+<img src="./images/replicaset-controller.drawio.svg">
 
 宣言的 API の対義語は 命令的 API と呼ばれる。これはアプリケーションに対し、具体的な処理内容を命令することで順次実行させることを指す。
 
@@ -58,6 +58,8 @@ Kubernetes Operator はカスタムリソースを使用する Kubernetes への
 カスタムコントローラーはあらゆるリソースと連携できるが、
 カスタムリソースと組み合わせると特に効果を発揮する。
 カスタムリソースとカスタムコントローラーを組み合わせて使用することを[オペレーターパターン](https://kubernetes.io/ja/docs/concepts/extend-kubernetes/operator/)と呼ぶ。
+
+<img src="./images/custom-controller.drawio.svg">
 
 ## カスタムリソース・カスタムコントローラーは何故必要なのか
 Web アプリケーション、モバイルバックエンド、API サービスなどのステートレスアプリケーションは、Kubernetes の Deployment 等で管理・スケーリングできる。
