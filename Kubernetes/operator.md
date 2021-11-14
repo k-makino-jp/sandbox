@@ -10,8 +10,8 @@
 * ebook
   * [O’Reilly: Kubernetes Operators: Automating the Container Orchestration Platform](https://www.redhat.com/ja/resources/oreilly-kubernetes-operators-automation-ebook)
 * 書籍
-  * [澤橋松王,大津浩司,青山真巳,河角修,鈴木洋一朗,関克隆 (2020) OpenShift徹底活用ガイド, 株式会社C&R研究所](https://www.c-r.com/book/detail/1362)
   * [青山真也 (2020) Kubernetes 完全ガイド, 株式会社インプレス](https://book.impress.co.jp/books/1119101148)
+  * [澤橋松王,大津浩司,青山真巳,河角修,鈴木洋一朗,関克隆 (2020) OpenShift徹底活用ガイド, 株式会社C&R研究所](https://www.c-r.com/book/detail/1362)
 
 ## Kubernetes Operator の概要
 Kubernetes Operator はカスタムリソースを使用する Kubernetes へのソフトウェア拡張 (カスタムコントローラー) であり、
