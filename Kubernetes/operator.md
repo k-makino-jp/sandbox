@@ -32,7 +32,7 @@ Kubernetes Operator はカスタムリソースを使用する Kubernetes への
 
 ## カスタムリソース とは
 カスタムリソースの説明の前にリソースを説明する。
-リソースは、Kubernetes API のエンドポイントで、特定の API オブジェクトのコレクションを保持する。
+**リソースは、Kubernetes API のエンドポイント**で、特定の API オブジェクトのコレクションを保持する。
 例えば、Pod の Kubernetes API はリソースであり、この API は、インスタンス作成 (create)、属性変更 (edit)、状態取得 (get)、削除 (delete)などのコレクションを含有している。
 
 <img src="./images/resource.drawio.svg">
