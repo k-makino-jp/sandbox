@@ -34,6 +34,21 @@ func (m *MockOsInterface) EXPECT() *MockOsInterfaceMockRecorder {
 	return m.recorder
 }
 
+// ReadFile mocks base method.
+func (m *MockOsInterface) ReadFile(name string) ([]byte, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReadFile", name)
+	ret0, _ := ret[0].([]byte)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ReadFile indicates an expected call of ReadFile.
+func (mr *MockOsInterfaceMockRecorder) ReadFile(name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadFile", reflect.TypeOf((*MockOsInterface)(nil).ReadFile), name)
+}
+
 // WriteFile mocks base method.
 func (m *MockOsInterface) WriteFile(name string, data []byte, perm fs.FileMode) error {
 	m.ctrl.T.Helper()

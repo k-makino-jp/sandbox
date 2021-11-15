@@ -41,6 +41,14 @@ func (c configCmd) createConfigDat() error {
 	return c.os.WriteFile(userConfigFilePath, jsonBytes, 0644)
 }
 
+func (c *configCmd) readConfigDat() error {
+	bytes, err := c.os.ReadFile(userConfigFilePath)
+	if err != nil {
+		return err
+	}
+	return c.json.Unmarshal(bytes, &c.UserConfig)
+}
+
 func (c configCmd) listConfigDat() error {
 	UserConfigType := reflect.TypeOf(c.UserConfig)
 	UserConfigValue := reflect.ValueOf(c.UserConfig)
@@ -51,4 +59,8 @@ func (c configCmd) listConfigDat() error {
 		fmt.Println(output)
 	}
 	return nil
+}
+
+func (c configCmd) GetUserConfig() UserConfig {
+	return c.UserConfig
 }

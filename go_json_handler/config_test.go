@@ -49,3 +49,21 @@ func TestConfigCmdCreateConfigDat_UserConfigHasValues_CreatesConfigDat(t *testin
 	actual := configCmd.createConfigDat()
 	assert.NoError(t, actual)
 }
+
+func TestConfigCmdGetUserConfig_UserConfigHasValues_ReturnsUserConfig(t *testing.T) {
+	configCmd := &configCmd{
+		UserConfig: UserConfig{HTTPSProxy: "http://proxy.example.com"},
+	}
+	actual := configCmd.GetUserConfig()
+	expect := UserConfig{HTTPSProxy: "http://proxy.example.com"}
+	assert.Equal(t, expect, actual)
+}
+
+func TestConfigCmdGetUserConfig_UserConfigHasNotValues_ReturnsUserConfig(t *testing.T) {
+	configCmd := &configCmd{
+		UserConfig: UserConfig{HTTPSProxy: ""},
+	}
+	actual := configCmd.GetUserConfig()
+	expect := UserConfig{HTTPSProxy: ""}
+	assert.Equal(t, expect, actual)
+}

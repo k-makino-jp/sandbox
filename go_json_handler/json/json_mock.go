@@ -47,3 +47,17 @@ func (mr *MockJsonInterfaceMockRecorder) MarshalIndent(v, prefix, indent interfa
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarshalIndent", reflect.TypeOf((*MockJsonInterface)(nil).MarshalIndent), v, prefix, indent)
 }
+
+// Unmarshal mocks base method.
+func (m *MockJsonInterface) Unmarshal(data []byte, v interface{}) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Unmarshal", data, v)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Unmarshal indicates an expected call of Unmarshal.
+func (mr *MockJsonInterfaceMockRecorder) Unmarshal(data, v interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unmarshal", reflect.TypeOf((*MockJsonInterface)(nil).Unmarshal), data, v)
+}

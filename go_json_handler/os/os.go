@@ -10,6 +10,7 @@ import (
 
 // OsInterface defines encoding/json methods.
 type OsInterface interface {
+	ReadFile(name string) ([]byte, error)
 	WriteFile(name string, data []byte, perm fs.FileMode) error
 }
 
@@ -20,6 +21,11 @@ type Os struct {
 // NewOs returns Os instance.
 func NewOs() *Os {
 	return &Os{}
+}
+
+// ReadFile wraps os.ReadFile.
+func (o Os) ReadFile(name string) ([]byte, error) {
+	return os.ReadFile(name)
 }
 
 // WriteFile wraps os.WriteFile.

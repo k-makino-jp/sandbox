@@ -10,6 +10,7 @@ import (
 // JsonInterface defines encoding/json methods.
 type JsonInterface interface {
 	MarshalIndent(v interface{}, prefix string, indent string) ([]byte, error)
+	Unmarshal(data []byte, v interface{}) error
 }
 
 // Json implements JsonInterface.
@@ -24,4 +25,9 @@ func NewJson() *Json {
 // MarshalIndent wraps encoding/json.MarshalIndent.
 func (j Json) MarshalIndent(v interface{}, prefix string, indent string) ([]byte, error) {
 	return json.MarshalIndent(v, prefix, indent)
+}
+
+// Unmarshal wraps encoding/json.Unmarshal.
+func (j Json) Unmarshal(data []byte, v interface{}) error {
+	return json.Unmarshal(data, v)
 }
