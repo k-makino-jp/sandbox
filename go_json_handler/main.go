@@ -1,7 +1,7 @@
 package main
 
 func main() {
-	rootCmd := NewRootCmd()
+	rootCmd := NewConfigCmd()
 	rootCmd.createConfigDat()
 	rootCmd.listConfigDat()
 }

@@ -1,5 +1,0 @@
-{
-  "noproxy": "proxy.example.com",
-  "http.proxy": "http://proxy.example.com",
-  "https.proxy": "http://proxy2.example.com"
-}

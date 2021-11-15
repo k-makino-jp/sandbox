@@ -1,51 +1,52 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
+	"gojson/json"
+	"gojson/os"
 	"reflect"
 )
 
-type config struct {
-	NoProxy    string `json:"noproxy"`
-	HTTPProxy  string `json:"http.proxy"`
+const (
+	userConfigFilePath = "data/user_config.json"
+)
+
+type UserConfig struct {
 	HTTPSProxy string `json:"https.proxy"`
 }
 
-type rootCmd struct {
-	config
+type configCmd struct {
+	UserConfig
+	os   os.OsInterface
+	json json.JsonInterface
 }
 
-func NewRootCmd() *rootCmd {
-	return &rootCmd{
-		config{
-			NoProxy:    "proxy.example.com",
-			HTTPProxy:  "http://proxy.example.com",
-			HTTPSProxy: "http://proxy2.example.com",
+func NewConfigCmd() *configCmd {
+	return &configCmd{
+		UserConfig: UserConfig{
+			HTTPSProxy: "http://proxy.example.com",
 		},
+		os:   os.NewOs(),
+		json: json.NewJson(),
 	}
 }
 
-var jsonMarshalIndent = json.MarshalIndent
-var osWriteFile = os.WriteFile
-
-func (r rootCmd) createConfigDat() error {
-	prefix := ""
-	indent := "  "
-	jsonBytes, err := jsonMarshalIndent(r.config, prefix, indent)
+func (c configCmd) createConfigDat() error {
+	const prefix = ""
+	const indent = "  "
+	jsonBytes, err := c.json.MarshalIndent(c.UserConfig, prefix, indent)
 	if err != nil {
 		return err
 	}
-	return osWriteFile("data/config.json", jsonBytes, 0644)
+	return c.os.WriteFile(userConfigFilePath, jsonBytes, 0644)
 }
 
-func (r rootCmd) listConfigDat() error {
-	configType := reflect.TypeOf(r.config)
-	configValue := reflect.ValueOf(r.config)
-	for i := 0; i < configType.NumField(); i++ {
-		key := configType.Field(i).Tag.Get("json")
-		value := configValue.Field(i).Interface()
+func (c configCmd) listConfigDat() error {
+	UserConfigType := reflect.TypeOf(c.UserConfig)
+	UserConfigValue := reflect.ValueOf(c.UserConfig)
+	for i := 0; i < UserConfigType.NumField(); i++ {
+		key := UserConfigType.Field(i).Tag.Get("json")
+		value := UserConfigValue.Field(i).Interface()
 		output := fmt.Sprintf("%s=%s", key, value)
 		fmt.Println(output)
 	}
