@@ -6,6 +6,7 @@ package os
 
 import (
 	fs "io/fs"
+	os "os"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -32,6 +33,35 @@ func NewMockOsInterface(ctrl *gomock.Controller) *MockOsInterface {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockOsInterface) EXPECT() *MockOsInterfaceMockRecorder {
 	return m.recorder
+}
+
+// Stat mocks base method.
+func (m *MockOsInterface) Stat(name string) (os.FileInfo, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Stat", name)
+	ret0, _ := ret[0].(os.FileInfo)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Stat indicates an expected call of Stat.
+func (mr *MockOsInterfaceMockRecorder) Stat(name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Stat", reflect.TypeOf((*MockOsInterface)(nil).Stat), name)
+}
+
+// IsNotExist mocks base method.
+func (m *MockOsInterface) IsNotExist(err error) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsNotExist", err)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsNotExist indicates an expected call of IsNotExist.
+func (mr *MockOsInterfaceMockRecorder) IsNotExist(err interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsNotExist", reflect.TypeOf((*MockOsInterface)(nil).IsNotExist), err)
 }
 
 // ReadFile mocks base method.

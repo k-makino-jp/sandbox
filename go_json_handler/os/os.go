@@ -10,6 +10,8 @@ import (
 
 // OsInterface defines encoding/json methods.
 type OsInterface interface {
+	Stat(name string) (os.FileInfo, error)
+	IsNotExist(err error) bool
 	ReadFile(name string) ([]byte, error)
 	WriteFile(name string, data []byte, perm fs.FileMode) error
 }
@@ -21,6 +23,16 @@ type Os struct {
 // NewOs returns Os instance.
 func NewOs() *Os {
 	return &Os{}
+}
+
+// Stat wraps os.Stat.
+func (o Os) Stat(name string) (os.FileInfo, error) {
+	return os.Stat(name)
+}
+
+// IsNotExist wraps os.IsNotExist.
+func (o Os) IsNotExist(err error) bool {
+	return os.IsNotExist(err)
 }
 
 // ReadFile wraps os.ReadFile.

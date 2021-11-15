@@ -42,6 +42,9 @@ func (c configCmd) createConfigDat() error {
 }
 
 func (c *configCmd) readConfigDat() error {
+	if _, err := c.os.Stat(userConfigFilePath); c.os.IsNotExist(err) {
+		return nil
+	}
 	bytes, err := c.os.ReadFile(userConfigFilePath)
 	if err != nil {
 		return err
